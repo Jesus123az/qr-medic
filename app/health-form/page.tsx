@@ -191,7 +191,7 @@ const HealthForm = () => {
               </Button>
             </div>
             <div>
-              <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
+              <h3 className="font-bold"> List of Allergies that can harm or kill you?</h3>
               {allergyFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
@@ -200,7 +200,7 @@ const HealthForm = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Medication {index+1}
+                          Allergy {index+1}
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="example: xyz" {...field} />

@@ -61,13 +61,13 @@ const Login = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password"  placeholder="Enter Email" {...field} />
+                  <Input type="password"  placeholder="Enter Password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit">Submit</Button>
+          <Button className="w-full" type="submit">Login</Button>
         </form>
       </Form>
       </div>
