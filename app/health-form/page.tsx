@@ -1,11 +1,18 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -16,21 +23,102 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
 const HealthForm = () => {
-  const formSchema = z.object({
-    harmfulMedicalConditions: z.array(z.string()),
-    harmfulMedications:  z.array(z.string()),
+  const contactSchema = z.object({
+    name: z.string().min(3),
+    number: z.string().regex(/^\d{10}$/, { message: "Invalid phone number" }),
   });
-  type FormFields = z.infer<typeof formSchema>;
+  const allergySchema = z.object({
+    name: z.string().min(3),
+  });
+  const medicationSchema = z.object({
+    name: z.string().min(3),
+  });
+  const medicalConditionSchema = z.object({
+    name: z.string().min(3),
+  });
+
+  const healthFormSchema = z.object({
+    harmfulMedicalConditions: z.array(medicalConditionSchema),
+    harmfulMedications: z.array(medicationSchema),
+    allergies: z.array(allergySchema),
+    doNotResusitate: z.boolean(),
+    seizureDisorder: z.boolean(),
+    missingOrgans: z.boolean(),
+    bloodType: z.string(),
+    emergencyContacts: z.array(contactSchema),
+    doctorContacts: z.array(contactSchema),
+  });
+  type FormFields = z.infer<typeof healthFormSchema>;
 
   const form = useForm<FormFields>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(healthFormSchema),
+    defaultValues: {
+      harmfulMedicalConditions: [{ name: "" }],
+      harmfulMedications: [{ name: "" }],
+      allergies: [{ name: "" }],
+      doNotResusitate: false,
+      seizureDisorder: false,
+      missingOrgans: false,
+      bloodType: "",
+      emergencyContacts: [{ name: "", number: "" }],
+      doctorContacts: [{ name: "", number: "" }],
+    },
+  });
+
+  const {
+    fields: medicalConditionFields,
+    append: appendMedicalCondition,
+    remove: removeMedicalCondition,
+  } = useFieldArray({
+    control: form.control,
+    name: "harmfulMedicalConditions",
+  });
+
+  const {
+    fields: medicationFields,
+    append: appendMedication,
+    remove: removeMedication,
+  } = useFieldArray({
+    control: form.control,
+    name: "harmfulMedications",
+  });
+
+  const {
+    fields: allergyFields,
+    append: appendAllergy,
+    remove: removeAllergy,
+  } = useFieldArray({
+    control: form.control,
+    name: "allergies",
+  });
+
+  const {
+    fields: emergencyFields,
+    append: appendEmergency,
+    remove: removeEmergency,
+  } = useFieldArray({
+    control: form.control,
+    name: "emergencyContacts",
+  });
+
+  const {
+    fields: doctorContactsFields,
+    append: appendDoctorContacts,
+    remove: removeDoctorContacts,
+  } = useFieldArray({
+    control: form.control,
+    name: "doctorContacts",
   });
 
   const onSubmit: SubmitHandler<FormFields> = (
-    values: z.infer<typeof formSchema>
+    values: z.infer<typeof healthFormSchema>
   ) => {
-    console.log(values);
+    setTimeout(() => {
+      console.log(values);
+    }, 2000);
   };
   return (
     <div className="px-[10%]  py-20 flex flex-col justify-center items-center">
@@ -38,68 +126,120 @@ const HealthForm = () => {
         <h1 className="text-center text-3xl font-bold">Health Form</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div>
+              <h3 className="font-bold">List of Medical Conditions that can harm or kill you?</h3>
+              {medicalConditionFields.map((field, index) => (
+                <div className="flex items-end gap-x-5">
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`harmfulMedicalConditions.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Medical Condition {index+1}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="example: xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {
+                    index !== 0 &&
+                  <Button type="button" onClick={()=>removeMedicalCondition(index)}>Remove</Button>
+                  }
+                </div>
+              ))}
+              <Button className="mt-4"
+                type="button"
+                onClick={() => appendMedicalCondition({ name: "" })}
+              >
+                Add 1 More
+              </Button>
+            </div>
+            <div>
+              <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
+              {medicationFields.map((field, index) => (
+                <div className="flex items-end gap-x-5">
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`harmfulMedications.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Medication {index+1}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="example: xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {
+                    index !== 0 &&
+                  <Button type="button" onClick={()=>removeMedication(index)}>Remove</Button>
+                  }
+                </div>
+              ))}
+              <Button className="mt-4"
+                type="button"
+                onClick={() => appendMedication({ name: "" })}
+              >
+                Add 1 More
+              </Button>
+            </div>
+            <div>
+              <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
+              {allergyFields.map((field, index) => (
+                <div className="flex items-end gap-x-5">
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`allergies.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Medication {index+1}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="example: xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {
+                    index !== 0 &&
+                  <Button type="button" onClick={()=>removeAllergy(index)}>Remove</Button>
+                  }
+                </div>
+              ))}
+              <Button className="mt-4"
+                type="button"
+                onClick={() => appendAllergy({ name: "" })}
+              >
+                Add 1 More
+              </Button>
+            </div>
             <FormField
               control={form.control}
-              name="harmfulMedicalConditions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>List of Medical Conditions that can harm or kill you?</FormLabel>
-                  <FormControl>
-                    <Input placeholder="example: xyz" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="harmfulMedicalConditions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>List of Medications that can harm or kill you, might not do well with or without?</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="example: xyz"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="harmfulMedicalConditions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>List of Allergies that can harm or kill you?</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="example: xyz"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="harmfulMedicalConditions"
+              name="doNotResusitate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Do you have a Do Not Resuscitate order?</FormLabel>
                   <FormControl>
-                    <RadioGroup defaultValue="false">
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="true"  value="true"/>
-                      <Label htmlFor="true">Yes</Label>
+                    <RadioGroup onChange={field.onChange} defaultValue="false">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="true" value="true" />
+                        <Label htmlFor="true">Yes</Label>
                       </div>
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="false"  value="false" />
-                      <Label htmlFor="false">No</Label>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="false" value="false" />
+                        <Label htmlFor="false">No</Label>
                       </div>
                     </RadioGroup>
                   </FormControl>
@@ -109,19 +249,19 @@ const HealthForm = () => {
             />
             <FormField
               control={form.control}
-              name="harmfulMedicalConditions"
+              name="seizureDisorder"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Do you have a Seizure disorder?</FormLabel>
                   <FormControl>
-                    <RadioGroup defaultValue="false">
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="true"  value="true"/>
-                      <Label htmlFor="true">Yes</Label>
+                    <RadioGroup onChange={field.onChange} defaultValue="false">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="true" value="true" />
+                        <Label htmlFor="true">Yes</Label>
                       </div>
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="false"  value="false" />
-                      <Label htmlFor="false">No</Label>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="false" value="false" />
+                        <Label htmlFor="false">No</Label>
                       </div>
                     </RadioGroup>
                   </FormControl>
@@ -131,19 +271,19 @@ const HealthForm = () => {
             />
             <FormField
               control={form.control}
-              name="harmfulMedicalConditions"
+              name="missingOrgans"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Do you have any missing organs?</FormLabel>
                   <FormControl>
                     <RadioGroup defaultValue="false">
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="true"  value="true"/>
-                      <Label htmlFor="true">Yes</Label>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="organs-true" value="true" />
+                        <Label htmlFor="organs-true">Yes</Label>
                       </div>
-                      <div  className="flex items-center space-x-2">
-                      <RadioGroupItem id="false"  value="false" />
-                      <Label htmlFor="false">No</Label>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem id="organs-false" value="false" />
+                        <Label htmlFor="organs-false">No</Label>
                       </div>
                     </RadioGroup>
                   </FormControl>
@@ -151,8 +291,137 @@ const HealthForm = () => {
                 </FormItem>
               )}
             />
-            
-            <Button type="submit">
+            <FormField
+              control={form.control}
+              name="bloodType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Blood Type?</FormLabel>
+                  <FormControl>
+                    <Select>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Blood Group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bloodGroups.map((group, index) => (
+                          <SelectItem value={group}>{group}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="">
+              <h3 className="text-xl">Emergency Contacts</h3>
+              {emergencyFields.map((field, index) => (
+                <div className="flex gap-x-6 items-end mt-4">
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`emergencyContacts.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Emergency Contact {index + 1} Name{" "}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="example: xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`emergencyContacts.${index}.number`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Emergency Contact {index + 1} Number{" "}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="10 digits" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {index === 1 && (
+                    <Button
+                      type="button"
+                      onClick={() => removeEmergency(index)}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              {emergencyFields.length < 2 && (
+                <Button
+                  className="mt-4"
+                  type="button"
+                  onClick={() => appendEmergency({ name: "", number: "" })}
+                >
+                  Add 1 More
+                </Button>
+              )}
+            </div>
+            <div className="">
+              <h3 className="text-xl">Doctor Contacts</h3>
+              {doctorContactsFields.map((field, index) => (
+                <div className="flex gap-x-6 items-end mt-4">
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`doctorContacts.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Doctor {index + 1} Name </FormLabel>
+                        <FormControl>
+                          <Input placeholder="example: xyz" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`doctorContacts.${index}.number`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Doctor {index + 1} Number </FormLabel>
+                        <FormControl>
+                          <Input type="tel" placeholder="10 digits" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {index === 1 && (
+                    <Button
+                      type="button"
+                      onClick={() => removeDoctorContacts(index)}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+              {doctorContactsFields.length < 2 && (
+                <Button
+                  className="mt-4"
+                  type="button"
+                  onClick={() => appendDoctorContacts({ name: "", number: "" })}
+                >
+                  Add 1 More
+                </Button>
+              )}
+            </div>
+            <Button disabled={form.formState.isSubmitting} type="submit">
               Generate QR Code
             </Button>
           </form>
