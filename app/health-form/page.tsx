@@ -129,10 +129,9 @@ const HealthForm = () => {
             <div>
               <h3 className="font-bold">List of Medical Conditions that can harm or kill you?</h3>
               {medicalConditionFields.map((field, index) => (
-                <div className="flex items-end gap-x-5">
+                <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`harmfulMedicalConditions.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -162,10 +161,9 @@ const HealthForm = () => {
             <div>
               <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
               {medicationFields.map((field, index) => (
-                <div className="flex items-end gap-x-5">
+                <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`harmfulMedications.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -195,10 +193,9 @@ const HealthForm = () => {
             <div>
               <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
               {allergyFields.map((field, index) => (
-                <div className="flex items-end gap-x-5">
+                <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`allergies.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -304,7 +301,7 @@ const HealthForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {bloodGroups.map((group, index) => (
-                          <SelectItem value={group}>{group}</SelectItem>
+                          <SelectItem key={index} value={group}>{group}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -316,10 +313,9 @@ const HealthForm = () => {
             <div className="">
               <h3 className="text-xl">Emergency Contacts</h3>
               {emergencyFields.map((field, index) => (
-                <div className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="flex gap-x-6 items-end mt-4">
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`emergencyContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -335,7 +331,6 @@ const HealthForm = () => {
                   />
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`emergencyContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
@@ -372,10 +367,9 @@ const HealthForm = () => {
             <div className="">
               <h3 className="text-xl">Doctor Contacts</h3>
               {doctorContactsFields.map((field, index) => (
-                <div className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="flex gap-x-6 items-end mt-4">
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`doctorContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -389,7 +383,6 @@ const HealthForm = () => {
                   />
                   <FormField
                     control={form.control}
-                    key={field.id}
                     name={`doctorContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
