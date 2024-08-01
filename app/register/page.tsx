@@ -8,6 +8,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { CldUploadButton } from "next-cloudinary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -18,6 +19,7 @@ const Register = () => {
         firstName: z.string(),
         lastName: z.string(),
         email: z.string().email(),
+        profilePicture: z.string(),
         password: z.string().min(4),
         confirmPassword: z.string().min(4),
     }).superRefine(({ confirmPassword, password }, ctx) => {
@@ -46,6 +48,10 @@ const Register = () => {
     <div className="px-[20%]  py-20 flex flex-col justify-center items-center">
       <div className="form-container w-[50%] shadow-lg px-10 py-4 rounded-lg">
       <h1 className="text-center text-3xl font-bold">Register</h1>
+      <div className="flex gap-x-5">
+      <label >Upload Profile Picture</label>
+      <CldUploadButton  options={{sources: ["local"], maxFiles: 1, multiple: false, }} className="bg-black text-white px-5 py-2" uploadPreset="" />
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

@@ -127,7 +127,9 @@ const HealthForm = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div>
-              <h3 className="font-bold">List of Medical Conditions that can harm or kill you?</h3>
+              <h3 className="font-bold">
+                List of Medical Conditions that can harm or kill you?
+              </h3>
               {medicalConditionFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
@@ -135,9 +137,7 @@ const HealthForm = () => {
                     name={`harmfulMedicalConditions.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Medical Condition {index+1}
-                        </FormLabel>
+                        <FormLabel>Medical Condition {index + 1}</FormLabel>
                         <FormControl>
                           <Input placeholder="example: xyz" {...field} />
                         </FormControl>
@@ -145,13 +145,18 @@ const HealthForm = () => {
                       </FormItem>
                     )}
                   />
-                  {
-                    index !== 0 &&
-                  <Button type="button" onClick={()=>removeMedicalCondition(index)}>Remove</Button>
-                  }
+                  {index !== 0 && (
+                    <Button
+                      type="button"
+                      onClick={() => removeMedicalCondition(index)}
+                    >
+                      Remove
+                    </Button>
+                  )}
                 </div>
               ))}
-              <Button className="mt-4"
+              <Button
+                className="mt-4"
                 type="button"
                 onClick={() => appendMedicalCondition({ name: "" })}
               >
@@ -159,7 +164,11 @@ const HealthForm = () => {
               </Button>
             </div>
             <div>
-              <h3 className="font-bold"> List of Medications that can harm or kill you, might not do well with or without?</h3>
+              <h3 className="font-bold">
+                {" "}
+                List of Medications that can harm or kill you, might not do well
+                with or without?
+              </h3>
               {medicationFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
@@ -167,9 +176,7 @@ const HealthForm = () => {
                     name={`harmfulMedications.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Medication {index+1}
-                        </FormLabel>
+                        <FormLabel>Medication {index + 1}</FormLabel>
                         <FormControl>
                           <Input placeholder="example: xyz" {...field} />
                         </FormControl>
@@ -177,13 +184,18 @@ const HealthForm = () => {
                       </FormItem>
                     )}
                   />
-                  {
-                    index !== 0 &&
-                  <Button type="button" onClick={()=>removeMedication(index)}>Remove</Button>
-                  }
+                  {index !== 0 && (
+                    <Button
+                      type="button"
+                      onClick={() => removeMedication(index)}
+                    >
+                      Remove
+                    </Button>
+                  )}
                 </div>
               ))}
-              <Button className="mt-4"
+              <Button
+                className="mt-4"
                 type="button"
                 onClick={() => appendMedication({ name: "" })}
               >
@@ -191,7 +203,10 @@ const HealthForm = () => {
               </Button>
             </div>
             <div>
-              <h3 className="font-bold"> List of Allergies that can harm or kill you?</h3>
+              <h3 className="font-bold">
+                {" "}
+                List of Allergies that can harm or kill you?
+              </h3>
               {allergyFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
@@ -199,9 +214,7 @@ const HealthForm = () => {
                     name={`allergies.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Allergy {index+1}
-                        </FormLabel>
+                        <FormLabel>Allergy {index + 1}</FormLabel>
                         <FormControl>
                           <Input placeholder="example: xyz" {...field} />
                         </FormControl>
@@ -209,13 +222,15 @@ const HealthForm = () => {
                       </FormItem>
                     )}
                   />
-                  {
-                    index !== 0 &&
-                  <Button type="button" onClick={()=>removeAllergy(index)}>Remove</Button>
-                  }
+                  {index !== 0 && (
+                    <Button type="button" onClick={() => removeAllergy(index)}>
+                      Remove
+                    </Button>
+                  )}
                 </div>
               ))}
-              <Button className="mt-4"
+              <Button
+                className="mt-4"
                 type="button"
                 onClick={() => appendAllergy({ name: "" })}
               >
@@ -301,7 +316,9 @@ const HealthForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {bloodGroups.map((group, index) => (
-                          <SelectItem key={index} value={group}>{group}</SelectItem>
+                          <SelectItem key={index} value={group}>
+                            {group}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -388,7 +405,11 @@ const HealthForm = () => {
                       <FormItem>
                         <FormLabel>Doctor {index + 1} Number </FormLabel>
                         <FormControl>
-                          <Input type="tel" placeholder="10 digits" {...field} />
+                          <Input
+                            type="tel"
+                            placeholder="10 digits"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
