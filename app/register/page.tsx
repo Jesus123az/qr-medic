@@ -17,8 +17,10 @@ import Image from "next/image";
 import { useState } from "react";
 import axios from "axios"
 import { useUserStore } from "@/store/user/userStore";
+import { useRouter } from "next/router";
 
 const Register = () => {
+  const router = useRouter();
   const isLoggedIn = useUserStore(state=>state.isLoggedIn)
   const registerUserSchema = z
     .object({
@@ -61,6 +63,7 @@ const Register = () => {
     try{
       console.log(values)
       const response = await axios.post("/api/users",values)
+      
     }catch(err){
       console.error(err)
     }
