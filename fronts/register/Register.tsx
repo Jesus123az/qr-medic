@@ -17,7 +17,7 @@ import Image from "next/image";
 import { useState } from "react";
 import axios from "axios"
 import { useUserStore } from "@/store/user/userStore";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
   const router = useRouter();
