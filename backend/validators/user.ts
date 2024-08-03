@@ -7,5 +7,5 @@ export const userSchema = z.object({
     email: z.string().email(),
     password: z.string().min(4),
     profileImage: z.string(),
-    healthInfo: healthFormSchema
+    healthInfo: healthFormSchema.optional(),
 })

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import  QRCodeStyling from "qr-code-styling"
 import {
   Select,
   SelectContent,
@@ -22,6 +23,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { useRef, useEffect } from "react";
+
+const qrCode = new QRCodeStyling({
+  width: 300,
+  height: 300,
+  image:
+    "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
+    data: "http://localhost:3000/api/users/66ad5b216e710ad2464f4ced",
+  dotsOptions: {
+    color: "#072138",
+    type: "rounded"
+  },
+  cornersSquareOptions:{
+    color: "#7A914B",
+    type: "extra-rounded"
+  },
+  imageOptions: {
+    crossOrigin: "anonymous",
+    margin: 20
+  }
+});
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -120,6 +142,13 @@ const HealthForm = () => {
       console.log(values);
     }, 2000);
   };
+
+const showQRCode = () => {
+    const divRef = ref.current;
+    qrCode.append(divRef? divRef: new HTMLElement());
+  }
+
+  const ref = useRef(null);
   return (
     <div className="px-[10%]  py-20 flex flex-col justify-center items-center">
       <div className="form-container w-[90%] shadow-lg px-10 py-4 rounded-lg">
@@ -435,9 +464,10 @@ const HealthForm = () => {
                 </Button>
               )}
             </div>
-            <Button disabled={form.formState.isSubmitting} type="submit">
+            <Button onClick={showQRCode}  disabled={form.formState.isSubmitting} type="button">
               Generate QR Code
             </Button>
+            <div ref={ref} />
           </form>
         </Form>
       </div>
