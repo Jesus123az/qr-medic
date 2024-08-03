@@ -145,7 +145,7 @@ const HealthForm = () => {
 
 const showQRCode = () => {
     const divRef = ref.current;
-    qrCode.append(divRef? divRef: new HTMLElement());
+    // qrCode.append(divRef? divRef: new HTMLElement());
   }
 
   const ref = useRef(null);
