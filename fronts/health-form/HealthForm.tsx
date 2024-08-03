@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import  QRCodeStyling from "qr-code-styling"
+import QRCodeStyling from "qr-code-styling";
 import {
   Select,
   SelectContent,
@@ -24,26 +24,6 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useRef, useEffect } from "react";
-
-const qrCode = new QRCodeStyling({
-  width: 300,
-  height: 300,
-  image:
-    "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
-    data: "http://localhost:3000/api/users/66ad5b216e710ad2464f4ced",
-  dotsOptions: {
-    color: "#072138",
-    type: "rounded"
-  },
-  cornersSquareOptions:{
-    color: "#7A914B",
-    type: "extra-rounded"
-  },
-  imageOptions: {
-    crossOrigin: "anonymous",
-    margin: 20
-  }
-});
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -143,14 +123,36 @@ const HealthForm = () => {
     }, 2000);
   };
 
-const showQRCode = () => {
-    const divRef = ref.current;
-    // qrCode.append(divRef? divRef: new HTMLElement());
-  }
+  const ref = useRef<HTMLDivElement>(null);
 
-  const ref = useRef(null);
+  useEffect(() => {
+    const qrCode = new QRCodeStyling({
+      width: 300,
+      height: 300,
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
+      data: "http://localhost:3000/api/users/66ad5b216e710ad2464f4ced",
+      dotsOptions: {
+        color: "#072138",
+        type: "rounded",
+      },
+      cornersSquareOptions: {
+        color: "#7A914B",
+        type: "extra-rounded",
+      },
+      imageOptions: {
+        crossOrigin: "anonymous",
+        margin: 20,
+      },
+    });
+
+    if (ref.current) {
+      qrCode.append(ref.current);
+    }
+  }, []);
+
   return (
-    <div className="px-[10%]  py-20 flex flex-col justify-center items-center">
+    <div className="px-[10%] py-20 flex flex-col justify-center items-center">
       <div className="form-container w-[90%] shadow-lg px-10 py-4 rounded-lg">
         <h1 className="text-center text-3xl font-bold">Health Form</h1>
         <Form {...form}>
@@ -194,7 +196,6 @@ const showQRCode = () => {
             </div>
             <div>
               <h3 className="font-bold">
-                {" "}
                 List of Medications that can harm or kill you, might not do well
                 with or without?
               </h3>
@@ -233,7 +234,6 @@ const showQRCode = () => {
             </div>
             <div>
               <h3 className="font-bold">
-                {" "}
                 List of Allergies that can harm or kill you?
               </h3>
               {allergyFields.map((field, index) => (
@@ -293,7 +293,7 @@ const showQRCode = () => {
               name="seizureDisorder"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you have a Seizure disorder?</FormLabel>
+                  <FormLabel>Do you have a seizure disorder?</FormLabel>
                   <FormControl>
                     <RadioGroup onChange={field.onChange} defaultValue="false">
                       <div className="flex items-center space-x-2">
@@ -317,14 +317,14 @@ const showQRCode = () => {
                 <FormItem>
                   <FormLabel>Do you have any missing organs?</FormLabel>
                   <FormControl>
-                    <RadioGroup defaultValue="false">
+                    <RadioGroup onChange={field.onChange} defaultValue="false">
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="organs-true" value="true" />
-                        <Label htmlFor="organs-true">Yes</Label>
+                        <RadioGroupItem id="true" value="true" />
+                        <Label htmlFor="true">Yes</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="organs-false" value="false" />
-                        <Label htmlFor="organs-false">No</Label>
+                        <RadioGroupItem id="false" value="false" />
+                        <Label htmlFor="false">No</Label>
                       </div>
                     </RadioGroup>
                   </FormControl>
@@ -337,16 +337,19 @@ const showQRCode = () => {
               name="bloodType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Blood Type?</FormLabel>
+                  <FormLabel>What is your blood type?</FormLabel>
                   <FormControl>
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Blood Group" />
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select blood group" />
                       </SelectTrigger>
                       <SelectContent>
-                        {bloodGroups.map((group, index) => (
-                          <SelectItem key={index} value={group}>
-                            {group}
+                        {bloodGroups.map((bloodGroup) => (
+                          <SelectItem key={bloodGroup} value={bloodGroup}>
+                            {bloodGroup}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -356,20 +359,18 @@ const showQRCode = () => {
                 </FormItem>
               )}
             />
-            <div className="">
-              <h3 className="text-xl">Emergency Contacts</h3>
+            <div>
+              <h3 className="font-bold">Emergency Contacts</h3>
               {emergencyFields.map((field, index) => (
-                <div key={field.id} className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
                     control={form.control}
                     name={`emergencyContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Emergency Contact {index + 1} Name{" "}
-                        </FormLabel>
+                        <FormLabel>Contact Name {index + 1}</FormLabel>
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input placeholder="example: John Doe" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -380,48 +381,41 @@ const showQRCode = () => {
                     name={`emergencyContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Emergency Contact {index + 1} Number{" "}
-                        </FormLabel>
+                        <FormLabel>Contact Number {index + 1}</FormLabel>
                         <FormControl>
-                          <Input placeholder="10 digits" {...field} />
+                          <Input placeholder="example: 1234567890" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  {index === 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeEmergency(index)}
-                    >
+                  {index !== 0 && (
+                    <Button type="button" onClick={() => removeEmergency(index)}>
                       Remove
                     </Button>
                   )}
                 </div>
               ))}
-              {emergencyFields.length < 2 && (
-                <Button
-                  className="mt-4"
-                  type="button"
-                  onClick={() => appendEmergency({ name: "", number: "" })}
-                >
-                  Add 1 More
-                </Button>
-              )}
+              <Button
+                className="mt-4"
+                type="button"
+                onClick={() => appendEmergency({ name: "", number: "" })}
+              >
+                Add 1 More
+              </Button>
             </div>
-            <div className="">
-              <h3 className="text-xl">Doctor Contacts</h3>
+            <div>
+              <h3 className="font-bold">Doctor Contacts</h3>
               {doctorContactsFields.map((field, index) => (
-                <div key={field.id} className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
                     control={form.control}
                     name={`doctorContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Doctor {index + 1} Name </FormLabel>
+                        <FormLabel>Contact Name {index + 1}</FormLabel>
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input placeholder="example: Dr. Smith" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -432,19 +426,15 @@ const showQRCode = () => {
                     name={`doctorContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Doctor {index + 1} Number </FormLabel>
+                        <FormLabel>Contact Number {index + 1}</FormLabel>
                         <FormControl>
-                          <Input
-                            type="tel"
-                            placeholder="10 digits"
-                            {...field}
-                          />
+                          <Input placeholder="example: 1234567890" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  {index === 1 && (
+                  {index !== 0 && (
                     <Button
                       type="button"
                       onClick={() => removeDoctorContacts(index)}
@@ -454,23 +444,19 @@ const showQRCode = () => {
                   )}
                 </div>
               ))}
-              {doctorContactsFields.length < 2 && (
-                <Button
-                  className="mt-4"
-                  type="button"
-                  onClick={() => appendDoctorContacts({ name: "", number: "" })}
-                >
-                  Add 1 More
-                </Button>
-              )}
+              <Button
+                className="mt-4"
+                type="button"
+                onClick={() => appendDoctorContacts({ name: "", number: "" })}
+              >
+                Add 1 More
+              </Button>
             </div>
-            <Button onClick={showQRCode}  disabled={form.formState.isSubmitting} type="button">
-              Generate QR Code
-            </Button>
-            <div ref={ref} />
+            <Button type="submit">Submit</Button>
           </form>
         </Form>
       </div>
+      <div ref={ref} className="mt-4"></div>
     </div>
   );
 };
