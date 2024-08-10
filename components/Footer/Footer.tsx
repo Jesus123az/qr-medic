@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between">
         <div className="mb-6 md:mb-0 flex flex-col items-center">
             <div className="flex items-center">
-          <img src="/logo.png" alt="QR Medic Logo" className="w-20 mb-4" />
+          <Image src="/logo.png" alt="QR Medic Logo" className="w-20 h-20 mb-4" />
           <h3 className="font-semibold text-4xl text-[#14264C]">QR MEDIC</h3>
             </div>
           <p className="text-md ">&copy; 2024 QR Medic, Inc.</p>

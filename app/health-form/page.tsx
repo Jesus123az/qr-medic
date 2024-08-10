@@ -515,10 +515,7 @@ const HealthForm = () => {
             <Button className="bg-[#1A4E68]"  disabled={form.formState.isSubmitting} type="button">
               Generate QR Code
             </Button>
-
-            <Suspense fallback={<div>Loading</div>}>
             <QRCodeComponent />
-            </Suspense>
           </form>
         </Form>
       </div>

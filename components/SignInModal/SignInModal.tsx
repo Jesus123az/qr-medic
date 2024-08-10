@@ -49,7 +49,7 @@ const SignInModal = () => {
           </svg>
         </button>
         <div className="absolute top-4 right-4 flex items-center">
-          <span className="text-sm text-gray-600 mr-2">Don't have an account?</span>
+          <span className="text-sm text-gray-600 mr-2">Don&apos;t have an account?</span>
           <button  className="bg-[#1A4E68] text-white text-sm py-1 px-3 rounded-md hover:bg-cyan-800 transition duration-300">
             Sign up
           </button>

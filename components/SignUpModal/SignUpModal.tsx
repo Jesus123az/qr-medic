@@ -77,7 +77,7 @@ const SignUpModal = () => {
             </svg>
           </button>
           <div className='flex gap-x-5 items-center'>
-              <span>Already have and account</span>
+              <span>Already have an account?</span>
               <Button className='px-2 py-0 h-7'>Log In</Button>
             </div>
         </div>
