@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import QRCodeComponent from "@/components/QRCodeComponent/QRCodeComponent";
 import { z } from "zod";
@@ -7,6 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { CldUploadButton } from "next-cloudinary";
+import Image from "next/image";
+import { User } from "lucide-react";
 
 import {
   Select,
@@ -24,7 +28,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -44,10 +47,12 @@ const HealthForm = () => {
   });
 
   const healthFormSchema = z.object({
+    legalName: z.string().min(3),
     harmfulMedicalConditions: z.array(medicalConditionSchema),
     harmfulMedications: z.array(medicationSchema),
     allergies: z.array(allergySchema),
     doNotResusitate: z.boolean(),
+    profileImage: z.string().nullable(),
     seizureDisorder: z.boolean(),
     missingOrgans: z.boolean(),
     bloodType: z.string(),
@@ -63,6 +68,7 @@ const HealthForm = () => {
       harmfulMedications: [{ name: "" }],
       allergies: [{ name: "" }],
       doNotResusitate: false,
+      profileImage: null,
       seizureDisorder: false,
       missingOrgans: false,
       bloodType: "",
@@ -125,13 +131,100 @@ const HealthForm = () => {
   };
 
   return (
-    <div className="px-[10%]  py-20 flex flex-col justify-center items-center">
-      <div className="form-container w-[90%] shadow-lg px-10 py-4 rounded-lg">
-        <h1 className="text-center text-3xl font-bold">Health Form</h1>
+    <div className="px-[10%] py-8 bg-[#CBE9EF]  flex flex-col justify-center items-center">
+      <h1 className="text-[30px] font-bold">Medical Form</h1>
+      <p className="font-medium">It only takes two easy steps!</p>
+      <div className="form-container mt-20  bg-white w-[90%] shadow-lg px-28 py-10 rounded-[31px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div>
-              <h3 className="font-bold">
+              <div className="step1 flex justify-between">
+                <div className="flex flex-col">
+        <h1 className=" text-3xl font-bold">Step 1</h1>
+        <div className="flex gap-x-5 mt-5 h-full ">
+          <div className="flex flex-col h-full justify-between items-center py-1">
+            <div className="min-w-5 min-h-5 border-2 border-[#14264C] rounded-full"></div>
+            <div className="min-w-[1px] max-w-[1px] min-h-5 bg-[#D1D1D1] rounded-full h-[70%]"></div>
+            <div className="min-w-5 min-h-5 border-2 border-[#14264C] rounded-full"></div>
+          </div>
+          <div className="flex flex-col h-full justify-between">
+            <div>
+              <h3 className="text-xl font-medium">Enter your legally authorized name</h3>
+              <FormField
+                    control={form.control}
+                    name={`legalName`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input className="w-96 mt-5" placeholder="Full Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                    />
+                    </div>
+              <h3 className="text-xl font-medium">Upload your Photo for Verification</h3>
+              </div>
+              </div>
+              </div>
+              <div className="flex flex-col items-center gap-y-5">
+                <div className="w-40 h-40 bg-[#C0E4EB] rounded-3xl border-2 border-[#88CBD7] flex justify-center items-center">
+                {form.getValues("profileImage")?
+                <Image className="max-w-full max-h-full" src={""} alt="" />
+                :
+                <User className="w-16 h-16 text-[#88CBD7]" />
+              }
+                </div>
+                <CldUploadButton
+                children={"Upload Photo"}
+            uploadPreset="med-ar"
+            onSuccess={(result) => {
+              form.setValue(
+                "profileImage",
+                typeof result.info === "object" ? result.info.secure_url : null
+              );
+              // setProfilePic(
+              //   typeof result.info === "object" ? result.info.secure_url : null
+              // );
+            }}
+            options={{
+              sources: ["local"],
+              clientAllowedFormats: ['jpeg', 'jpg', 'png'],
+              cropping: true,
+              maxFiles: 1,
+              multiple: false,
+            }}
+            className="bg-[#1A4E68] rounded-xl text-white px-5 py-2"
+          />
+              </div>
+                    </div>
+                    <div className="min-h-[1px] min-w-full bg-[#D1D1D1] my-20"></div>
+                    <h1 className=" text-3xl font-bold ">Step 2</h1>
+                    <FormField
+              control={form.control}
+              name="bloodType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Blood Type?</FormLabel>
+                  <FormControl>
+                    <Select>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Blood Group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bloodGroups.map((group, index) => (
+                          <SelectItem key={index} value={group}>
+                            {group}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+              <h3 className="text-xl font-medium">
                 List of Medical Conditions that can harm or kill you?
               </h3>
               {medicalConditionFields.map((field, index) => (
@@ -151,6 +244,7 @@ const HealthForm = () => {
                   />
                   {index !== 0 && (
                     <Button
+                    className="bg-[#1A4E68]"
                       type="button"
                       onClick={() => removeMedicalCondition(index)}
                     >
@@ -160,7 +254,7 @@ const HealthForm = () => {
                 </div>
               ))}
               <Button
-                className="mt-4"
+                className="mt-4 bg-[#1A4E68]"
                 type="button"
                 onClick={() => appendMedicalCondition({ name: "" })}
               >
@@ -168,7 +262,7 @@ const HealthForm = () => {
               </Button>
             </div>
             <div>
-              <h3 className="font-bold">
+              <h3 className="text-xl font-medium">
                 {" "}
                 List of Medications that can harm or kill you, might not do well
                 with or without?
@@ -190,6 +284,7 @@ const HealthForm = () => {
                   />
                   {index !== 0 && (
                     <Button
+                    className="bg-[#1A4E68]"
                       type="button"
                       onClick={() => removeMedication(index)}
                     >
@@ -199,7 +294,7 @@ const HealthForm = () => {
                 </div>
               ))}
               <Button
-                className="mt-4"
+                className="mt-4 bg-[#1A4E68]"
                 type="button"
                 onClick={() => appendMedication({ name: "" })}
               >
@@ -207,7 +302,7 @@ const HealthForm = () => {
               </Button>
             </div>
             <div>
-              <h3 className="font-bold">
+              <h3 className="text-xl font-medium">
                 {" "}
                 List of Allergies that can harm or kill you?
               </h3>
@@ -227,14 +322,14 @@ const HealthForm = () => {
                     )}
                   />
                   {index !== 0 && (
-                    <Button type="button" onClick={() => removeAllergy(index)}>
+                    <Button className="bg-[#1A4E68]" type="button" onClick={() => removeAllergy(index)}>
                       Remove
                     </Button>
                   )}
                 </div>
               ))}
               <Button
-                className="mt-4"
+                className="mt-4 bg-[#1A4E68]"
                 type="button"
                 onClick={() => appendAllergy({ name: "" })}
               >
@@ -307,31 +402,7 @@ const HealthForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="bloodType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Blood Type?</FormLabel>
-                  <FormControl>
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Blood Group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {bloodGroups.map((group, index) => (
-                          <SelectItem key={index} value={group}>
-                            {group}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="">
+            <div>
               <h3 className="text-xl">Emergency Contacts</h3>
               {emergencyFields.map((field, index) => (
                 <div key={field.id} className="flex gap-x-6 items-end mt-4">
@@ -367,6 +438,7 @@ const HealthForm = () => {
                   />
                   {index === 1 && (
                     <Button
+                    className="bg-[#1A4E68]"
                       type="button"
                       onClick={() => removeEmergency(index)}
                     >
@@ -377,7 +449,7 @@ const HealthForm = () => {
               ))}
               {emergencyFields.length < 2 && (
                 <Button
-                  className="mt-4"
+                  className="mt-4 bg-[#1A4E68]"
                   type="button"
                   onClick={() => appendEmergency({ name: "", number: "" })}
                 >
@@ -421,6 +493,7 @@ const HealthForm = () => {
                   />
                   {index === 1 && (
                     <Button
+                    className="bg-[#1A4E68]"
                       type="button"
                       onClick={() => removeDoctorContacts(index)}
                     >
@@ -431,7 +504,7 @@ const HealthForm = () => {
               ))}
               {doctorContactsFields.length < 2 && (
                 <Button
-                  className="mt-4"
+                  className="mt-4 bg-[#1A4E68]"
                   type="button"
                   onClick={() => appendDoctorContacts({ name: "", number: "" })}
                 >
@@ -439,10 +512,13 @@ const HealthForm = () => {
                 </Button>
               )}
             </div>
-            <Button  disabled={form.formState.isSubmitting} type="button">
+            <Button className="bg-[#1A4E68]"  disabled={form.formState.isSubmitting} type="button">
               Generate QR Code
             </Button>
+
+            <Suspense fallback={<div>Loading</div>}>
             <QRCodeComponent />
+            </Suspense>
           </form>
         </Form>
       </div>

@@ -15,6 +15,7 @@ const medicalConditionSchema = z.object({
 });
 
 export const healthFormSchema = z.object({
+  _id: z.string(),
   harmfulMedicalConditions: z.array(medicalConditionSchema),
   harmfulMedications: z.array(medicationSchema),
   allergies: z.array(allergySchema),
