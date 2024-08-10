@@ -176,7 +176,6 @@ const HealthForm = () => {
               }
                 </div>
                 <CldUploadButton
-                children={"Upload Photo"}
             uploadPreset="med-ar"
             onSuccess={(result) => {
               form.setValue(
@@ -195,7 +194,7 @@ const HealthForm = () => {
               multiple: false,
             }}
             className="bg-[#1A4E68] rounded-xl text-white px-5 py-2"
-          />
+          >Upload Photo</CldUploadButton>
               </div>
                     </div>
                     <div className="min-h-[1px] min-w-full bg-[#D1D1D1] my-20"></div>
