@@ -1,4 +1,3 @@
-"use client"
 import type { Metadata } from "next";
 import { Inter, Red_Hat_Text } from "next/font/google";
 import "./globals.css";
