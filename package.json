@@ -21,7 +21,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.417.0",
-    "mind-ar": "^1.2.5",
+    "mind-ar": "^1.2.1",
     "mongoose": "^8.5.1",
     "next": "14.2.5",
     "next-cloudinary": "^6.7.0",
@@ -32,7 +32,7 @@
     "react-scroll": "^1.9.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.167.1",
+    "three": "^0.150.1",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
