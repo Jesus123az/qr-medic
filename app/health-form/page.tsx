@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
 import { User } from "lucide-react";
-// import QRCodeStyling from "qr-code-styling";
+import qrLogo from "@/assets/qr-logo.png"
+
 
 
 import {
@@ -168,7 +169,7 @@ const HealthForm = () => {
       const qrCode = new QRCodeStyling({
         width: 300,
         height: 300,
-        image: "/qr-logo.png",
+        image: qrLogo.src,
         data: `https://mind-ar-backend-1.onrender.com/ar-app?id=${user?._id}`,
         dotsOptions: {
           color: "#072138",

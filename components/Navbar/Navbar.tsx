@@ -18,6 +18,7 @@ import { useModalStore } from "@/store/modal/ModalStore";
 import { useUserStore } from "@/store/user/userStore";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import logo from "@/assets/logo.png"
 
 const Navbar = () => {
   const { showSignInModal, setShowSignInModal } = useModalStore();
@@ -37,7 +38,7 @@ const Navbar = () => {
       {showSignInModal && <SignInModal />}
       <nav className="flex text-[#14264C] justify-between px-5  items-center">
         <Link className="flex  items-center" href={"/"}>
-          <Image width={70} height={70} src={"/logo.png"} alt="logo" />
+          <Image width={70} height={70} src={logo} alt="logo" />
           <h1 className="text-4xl font-semibold">QR MEDIC</h1>
         </Link>
         {user?

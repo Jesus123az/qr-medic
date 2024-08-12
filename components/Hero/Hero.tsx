@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Button } from "../ui/button"
 import SignUpModal from "../SignUpModal/SignUpModal"
 import { useModalStore } from "@/store/modal/ModalStore"
+import oldGuy from "@/assets/old-man.png"
 const Hero = () => {
   const {showSignUpModal, setShowSignUpModal, setShowSignInModal} = useModalStore(state=>state)
   return (    
@@ -18,7 +19,7 @@ const Hero = () => {
             <div className="avatar rounded-[40px] shadow-[6.64px_7.38px_11.81px_-7.38px_#00000040]">
               <Image
                 className="overflow-hidden rounded-[60px]"
-                src={"/avatar-1.png"}
+                src={oldGuy}
                 alt="avatar"
                 width={254}
                 height={245}

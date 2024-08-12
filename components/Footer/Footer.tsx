@@ -4,6 +4,7 @@ import facebook from "@/assets/Facebook.png"
 import twitter from "@/assets/Twitter.png"
 import instagram from "@/assets/Instagram.png"
 import Image from "next/image";
+import logo from "@/assets/logo.png"
 
 
 const Footer = () => {
@@ -14,7 +15,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between">
         <div className="mb-6 md:mb-0 flex flex-col items-center">
             <div className="flex items-center">
-          <Image src="/logo.png" width={80} height={80} alt="QR Medic Logo" className=" mb-4" />
+          <Image src={logo} width={80} height={80} alt="QR Medic Logo" className=" mb-4" />
           <h3 className="font-semibold text-4xl text-[#14264C]">QR MEDIC</h3>
             </div>
           <p className="text-md ">&copy; 2024 QR Medic, Inc.</p>
