@@ -582,7 +582,7 @@ const HealthForm = () => {
                     name={`doctorContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xl font-medium">Doctor's Name</FormLabel>
+                        <FormLabel className="text-xl font-medium">Doctor&apos;s Name</FormLabel>
                         <FormControl>
                           <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
                         </FormControl>
@@ -595,7 +595,7 @@ const HealthForm = () => {
                     name={`doctorContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xl font-medium">Doctor's Number </FormLabel>
+                        <FormLabel className="text-xl font-medium">Doctor&apos;s Number </FormLabel>
                         <FormControl>
                           <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white"
                             type="tel"
