@@ -18,16 +18,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-// const pathname = usePathname();
-// if(pathname==="/ar"){
-//   return(
-//     <html lang="en">
-//     <body className={redHatText.className}>
-//       {children}
-//       </body>
-//   </html>
-//   )
-// }
   return (
     <html lang="en">
       <body className={redHatText.className}>

@@ -13,17 +13,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from 'axios';
+import { useUserStore } from '@/store/user/userStore';
+import { useRouter } from 'next/navigation';
 
 const SignInModal = () => {
+  const {setUser} = useUserStore(state=>state)
   const {setShowSignInModal} = useModalStore(state=>state)
+  const router = useRouter();
   const formSchema = z.object({
     email: z.string().email({
       message: "Enter a valid email",
     }),
-    password: z.string().min(8, {
-      message: "Password should be at least 8 characters"
+    password: z.string().min(6, {
+      message: "Password should be at least 6 characters"
     })
   });
+  const onClose =()=>setShowSignInModal(false)
+
 
   type FormFields = z.infer<typeof formSchema>;
 
@@ -31,14 +38,32 @@ const SignInModal = () => {
     resolver: zodResolver(formSchema),
 
   });
-
-  const onSubmit: SubmitHandler<FormFields> = (
+  
+  const onSubmit: SubmitHandler<FormFields> = async (
     values: z.infer<typeof formSchema>
   ) => {
-    console.log(values);
-  };
 
-  const onClose =()=>setShowSignInModal(false)
+    try {
+      const response = await axios.post("/api/login", values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.status !== 200) {
+        throw new Error("Login failed");
+      }
+      const user = response.data;
+      // Set the user state in Zustand
+      console.log(user)
+      setUser(user);    // Redirect to the desired page after login
+      onClose();
+      router.push("/health-form");
+    } catch (e) {
+      console.error(e);
+      // Handle error, e.g., show a notification to the user
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-cyan-100 bg-opacity-50 flex items-center justify-center">

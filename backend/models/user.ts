@@ -11,12 +11,11 @@ if (mongoose.models.User) {
 } else {
   const UserSchema = new Schema(
     {
-        firstName: {type: String, required: true},
-        lastName: {type: String, required: true},
+        name: {type: String, required: true},
         email: {type: String, required: true, unique: true},
         password: {type: String, required: true},
-        profileImage: {type: String, required: true},
         healthInfo: {type: Schema.ObjectId, ref: "healthInfo" , default: null, required: false},
+        qrCodeGenerated: {type: Boolean, default: false, required: false},
     },
     { timestamps: true }
   );

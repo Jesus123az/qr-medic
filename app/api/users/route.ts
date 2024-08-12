@@ -4,6 +4,8 @@ import { connectDB } from "@/backend/db/connect";
 import { userSchema } from "@/backend/validators/user";
 import bcrypt from "bcrypt";
 import { User } from "@/backend/types/user";
+import { sign } from "@/backend/middlewares/jose";
+import { nanoid } from "nanoid";
 
 const saltRounds = 10;
 
@@ -21,14 +23,30 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     let user = (await req.json()) as User;
-    console.log(user);
+
+    // Validate the user data
     userSchema.parse(user);
-    bcrypt.hash(user.password, saltRounds, async function (err, hash) {
-      user.password = hash;
-      const newUser = await createUser(user);
-      return NextResponse.json(newUser, { status: 200 });
+
+    // Hash the user's password
+    const hash = await bcrypt.hash(user.password, saltRounds);
+    user.password = hash;
+
+    // Create the user in the database
+    const newUser = await createUser(user);
+
+    // Sign the JWT
+    const token = await  sign({ id: newUser._id.toString() })
+    // Set the JWT as a cookie
+    const response = NextResponse.json(newUser, { status: 200 });
+    response.cookies.set("auth-token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 10, // 10 days
     });
-    return NextResponse.json("success", { status: 200 });
+
+    return response;
   } catch (err) {
     console.error(err);
     return NextResponse.json({ err }, { status: 400 });

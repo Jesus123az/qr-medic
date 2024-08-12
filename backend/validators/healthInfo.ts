@@ -16,6 +16,9 @@ const medicalConditionSchema = z.object({
 
 export const healthFormSchema = z.object({
   _id: z.string(),
+  legalName: z.string().min(3),
+  age: z.number().min(0).max(130),
+  profileImage: z.string().url(),
   harmfulMedicalConditions: z.array(medicalConditionSchema),
   harmfulMedications: z.array(medicationSchema),
   allergies: z.array(allergySchema),

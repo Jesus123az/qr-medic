@@ -2,10 +2,10 @@ import { z } from "zod";
 import { healthFormSchema } from "./healthInfo";
 
 export const userSchema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
+    _id: z.string().optional(),
+    name: z.string(),
     email: z.string().email(),
     password: z.string().min(4),
-    profileImage: z.string(),
     healthInfo: healthFormSchema.optional(),
+    qrCodeGenerated: z.boolean().optional().default(false),
 })

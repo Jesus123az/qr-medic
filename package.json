@@ -20,6 +20,8 @@
     "axios": "^1.7.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cookies": "^0.9.1",
+    "jose": "^5.6.3",
     "lucide-react": "^0.417.0",
     "mind-ar": "^1.2.1",
     "mongoose": "^8.5.1",
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cookies": "^0.9.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

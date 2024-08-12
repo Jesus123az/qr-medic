@@ -15,11 +15,23 @@ import {
 } from "@/components/ui/select";
 import SignInModal from "../SignInModal/SignInModal";
 import { useModalStore } from "@/store/modal/ModalStore";
+import { useUserStore } from "@/store/user/userStore";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
-  const { showSignInModal, setShowSignInModal } = useModalStore(
-    (state) => state
-  );
+  const { showSignInModal, setShowSignInModal } = useModalStore();
+  const {user, setUser} =  useUserStore();
+  const router = useRouter()
+  const handleSignOut = async ()=>{
+    try{
+      await axios.post("/api/logout")
+      setUser(null)
+      router.push("/")
+    }catch(err){
+      console.error(err)
+    }
+  }
   return (
     <header className="bg-[#CBE9EF] pb-7">
       {showSignInModal && <SignInModal />}
@@ -28,6 +40,27 @@ const Navbar = () => {
           <Image width={70} height={70} src={"/logo.png"} alt="logo" />
           <h1 className="text-4xl font-semibold">QR MEDIC</h1>
         </Link>
+        {user?
+         <ul className="flex gap-x-7 text-2xl font-medium">
+          <li>
+            <Link className="hover:underline" href={"/"}>
+            Home
+            </Link>
+          </li>
+          <li>
+            <Link className="hover:underline" href={"/health-form"}>
+            Medical Form
+            </Link>
+          </li>
+          {/* {user.healthInfo && */}
+          <li>
+            <Link className="hover:underline" href={"/qr-code"}>
+            QR Code
+            </Link>
+          </li>
+          {/* } */}
+        </ul> 
+        : 
         <ul className="flex gap-x-7 text-2xl font-medium">
           <li>
             <ScrollLink
@@ -56,6 +89,7 @@ const Navbar = () => {
             </ScrollLink>
           </li>
         </ul>
+            }
         <ul className="flex gap-x-5 text-2xl font-medium">
           <li>
             {" "}
@@ -81,12 +115,21 @@ const Navbar = () => {
           </li>
           <li>
             {/* <Link href={"/login"}> */}
+            {user?
             <Button
-              onClick={() => setShowSignInModal(true)}
-              className="text-lg rounded-2xl py-2 px-4 font-medium  bg-white hover:bg-white text-[#14264C]"
+            onClick={handleSignOut}
+            className="text-lg rounded-2xl py-2 px-4 font-medium  bg-white hover:bg-white text-[#14264C]"
+            >
+              {user.name} <User />
+            </Button>
+            :
+            <Button
+            onClick={() => setShowSignInModal(true)}
+            className="text-lg rounded-2xl py-2 px-4 font-medium  bg-white hover:bg-white text-[#14264C]"
             >
               Account Login <User />
             </Button>
+            }
             {/* </Link> */}
           </li>
         </ul>

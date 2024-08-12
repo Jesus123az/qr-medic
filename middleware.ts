@@ -1,9 +1,31 @@
 import { NextRequest, NextResponse } from "next/server"
+import { verify } from "./backend/middlewares/jose"
 
-export const middleware = (request: NextRequest)=>{
-//     return NextResponse.redirect(new URL("/login", request.url))
+const secret = process.env.JWT_SECRET;
+
+export const middleware = async (request: NextRequest)=>{
+    const path = request.nextUrl.pathname
+ const authToken = request.cookies.get("auth-token")?.value
+ if(authToken && secret){
+    const user = await verify(authToken, secret)
+    if(user){
+        if(path === "/" ){
+            return NextResponse.redirect(new URL("/health-form", request.url))
+        }
+       
+    }
+
+ }
+ else{
+     if(path !== "/" ){
+        return NextResponse.redirect(new URL("/", request.url))
+    }
+ }
 }
 
-// export const config = {
-//     matcher: '/health-form',
-//   }
+export const config = {
+    matcher: [
+      "/((?!api/login|api/logout|api/users|_next/static|_next/image|public|favicon.ico).*)",
+    ],
+  };
+  

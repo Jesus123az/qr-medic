@@ -1,6 +1,8 @@
+import { useUserStore } from '@/store/user/userStore';
 import { useEffect, useRef } from 'react';
 
 const QRCodeComponent = () => {
+  const {user} = useUserStore();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -11,7 +13,7 @@ const QRCodeComponent = () => {
           width: 300,
           height: 300,
           image: "/qr-logo.png",
-          data: "https:www.youtube.com",
+          data: `https://mind-ar-backend-1.onrender.com/ar-app?id=${user?._id}`,
           dotsOptions: {
             color: "#072138",
             type: "rounded"

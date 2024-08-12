@@ -23,11 +23,12 @@ import { useRouter } from "next/navigation";
 
 
 const SignUpModal = () => {
+  const {setUser} = useUserStore()
   const {setShowSignUpModal} = useModalStore(state=>state)
   const router = useRouter();
   const registerUserSchema = z
     .object({
-      firstName: z.string(),
+      name: z.string(),
       email: z.string().email(),
       password: z.string().min(4),
       confirmPassword: z.string().min(4),
@@ -46,10 +47,10 @@ const SignUpModal = () => {
   const form = useForm<FormFields>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: {
-      confirmPassword: "",
+      name: "",
       email: "",
-      firstName: "",
       password: "",
+      confirmPassword: "",
     },
   });
   const  onSubmit: SubmitHandler<FormFields> = async (
@@ -58,9 +59,17 @@ const SignUpModal = () => {
     try{
       console.log(values)
       const response = await axios.post("/api/users",values)
-      router.push("/health-form")
-    }catch(err){
-      console.error(err)
+      if (response.status !== 200) {
+        throw new Error("Login failed");
+      }
+      const user = response.data;
+      // Set the user state in Zustand
+      setUser(user);    // Redirect to the desired page after login
+      onClose();
+      router.push("/health-form");
+    } catch (e) {
+      console.error(e);
+      // Handle error, e.g., show a notification to the user
     }
   };
 
@@ -89,7 +98,7 @@ const SignUpModal = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="firstName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>

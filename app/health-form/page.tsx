@@ -1,7 +1,6 @@
 "use client";
-import { Suspense } from "react";
+import {  useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import QRCodeComponent from "@/components/QRCodeComponent/QRCodeComponent";
 import { z } from "zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
 import { User } from "lucide-react";
+// import QRCodeStyling from "qr-code-styling";
+
 
 import {
   Select,
@@ -28,10 +29,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useUserStore } from "@/store/user/userStore";
+import { useRouter } from "next/navigation";
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const HealthForm = () => {
+  const router = useRouter()
+  const {user, setUser}= useUserStore();
+  const [profile, setProfile] = useState<string | null>(null);
   const contactSchema = z.object({
     name: z.string().min(3),
     number: z.string().regex(/^\d{10}$/, { message: "Invalid phone number" }),
@@ -48,6 +55,7 @@ const HealthForm = () => {
 
   const healthFormSchema = z.object({
     legalName: z.string().min(3),
+    age: z.string().min(0).max(130),
     harmfulMedicalConditions: z.array(medicalConditionSchema),
     harmfulMedications: z.array(medicationSchema),
     allergies: z.array(allergySchema),
@@ -64,16 +72,18 @@ const HealthForm = () => {
   const form = useForm<FormFields>({
     resolver: zodResolver(healthFormSchema),
     defaultValues: {
-      harmfulMedicalConditions: [{ name: "" }],
-      harmfulMedications: [{ name: "" }],
-      allergies: [{ name: "" }],
-      doNotResusitate: false,
-      profileImage: null,
-      seizureDisorder: false,
-      missingOrgans: false,
-      bloodType: "",
-      emergencyContacts: [{ name: "", number: "" }],
-      doctorContacts: [{ name: "", number: "" }],
+      legalName: "",
+    age: "",
+    harmfulMedicalConditions: [{ name: "" }],
+    harmfulMedications: [{ name: "" }],
+    allergies: [{ name: "" }],
+    doNotResusitate: false,
+    profileImage: null,
+    seizureDisorder: false,
+    missingOrgans: false,
+    bloodType: "",
+    emergencyContacts: [{ name: "", number: "" }],
+    doctorContacts: [{ name: "", number: "" }],
     },
   });
 
@@ -122,13 +132,100 @@ const HealthForm = () => {
     name: "doctorContacts",
   });
 
-  const onSubmit: SubmitHandler<FormFields> = (
+  const onSubmit: SubmitHandler<FormFields> = async (
     values: z.infer<typeof healthFormSchema>
   ) => {
-    setTimeout(() => {
-      console.log(values);
-    }, 2000);
+    try{
+      if(user){
+        if(user.healthInfo){
+          const response = await axios.post(`/api/healthInfo/${user.healthInfo._id}`, values)  
+          if(response.status!== 200){
+            throw new Error("Error occured")
+          }
+          router.push("/qr-code")
+        }
+        else{
+
+          const response = await axios.post(`/api/healthInfo/${user._id}`, values)
+          if(response.status!== 200){
+            throw new Error("Error occured")
+          }
+          setUser({...user, healthInfo: response.data._id})
+          router.push("/qr-code")
+        }
+      }
+      }catch(err){
+      console.error(err)
+    }
   };
+
+  const getQRCodeTracked = async ()=>{
+    try{
+      const QRCodeStyling = (await import('qr-code-styling')).default;
+      console.log(user)
+      if(!user ||user.qrCodeGenerated) return
+
+      const qrCode = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        image: "/qr-logo.png",
+        data: `https://mind-ar-backend-1.onrender.com/ar-app?id=${user?._id}`,
+        dotsOptions: {
+          color: "#072138",
+          type: "rounded"
+        },
+        cornersSquareOptions:{
+          color: "#A20601",
+          type: "extra-rounded"
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 0
+        }
+      });
+      const qrBlob = await qrCode.getRawData("png")
+      if(!qrBlob) return
+      console.log("hello3" + user)
+      const formData = new FormData();
+      formData.append('image', qrBlob, `qrcode.png`);
+      const response = await axios.post(`https://mind-ar-backend-1.onrender.com/process-image/${user?._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      if(response.status!==200){
+        throw new Error("error getting image tracked")
+      }
+      setUser({...user, qrCodeGenerated: true})      
+    }catch(err){
+      console.error(err)
+    }
+  }
+  const getHealthInfo  = async()=>{
+    try{
+      if(!user?.healthInfo) return
+      const response = await axios.get(`/api/users/${user?._id}/healthInfo`);
+      console.log("healthInfo: " )
+      console.log(response.data)
+      const healthInfo = response.data;
+      form.reset(healthInfo);
+      // Update profile image state if it exists
+      if (healthInfo.profileImage) {
+        setProfile(healthInfo.profileImage);
+      }
+    }catch(err){
+      console.error(err)
+    }
+  }
+  console.log(user)
+
+
+  useEffect(()=>{
+    if(user){
+      getHealthInfo();
+      getQRCodeTracked();
+    }
+  },[user])
 
   return (
     <div className="px-[10%] py-8 bg-[#CBE9EF]  flex flex-col justify-center items-center">
@@ -156,7 +253,7 @@ const HealthForm = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input className="w-96 mt-5" placeholder="Full Name" {...field} />
+                          <Input className="border-2 border-[#7D9F0C] bg-white w-96 mt-5"  placeholder="Full Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -169,8 +266,8 @@ const HealthForm = () => {
               </div>
               <div className="flex flex-col items-center gap-y-5">
                 <div className="w-40 h-40 bg-[#C0E4EB] rounded-3xl border-2 border-[#88CBD7] flex justify-center items-center">
-                {form.getValues("profileImage")?
-                <Image className="max-w-full max-h-full" src={""} alt="" />
+                {profile?
+                <Image className="max-w-full max-h-full" width={160} height={160} src={profile} alt="" />
                 :
                 <User className="w-16 h-16 text-[#88CBD7]" />
               }
@@ -182,33 +279,38 @@ const HealthForm = () => {
                 "profileImage",
                 typeof result.info === "object" ? result.info.secure_url : null
               );
-              // setProfilePic(
-              //   typeof result.info === "object" ? result.info.secure_url : null
-              // );
+              setProfile(
+                typeof result.info === "object" ? result.info.secure_url : null
+              );
             }}
             options={{
               sources: ["local"],
               clientAllowedFormats: ['jpeg', 'jpg', 'png'],
               cropping: true,
+              croppingAspectRatio: 1,
               maxFiles: 1,
               multiple: false,
             }}
-            className="bg-[#1A4E68] rounded-xl text-white px-5 py-2"
+            className="bg-[#1A4E68] hover:bg-[#102f3f] rounded-xl text-white px-5 py-2"
           >Upload Photo</CldUploadButton>
               </div>
                     </div>
                     <div className="min-h-[1px] min-w-full bg-[#D1D1D1] my-20"></div>
                     <h1 className=" text-3xl font-bold ">Step 2</h1>
+                    <h3 className="text-xl font-medium mt-5">
+                    Enter your latest medical information below
+              </h3>
+              <div className="flex gap-x-28 my-7">
                     <FormField
               control={form.control}
               name="bloodType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Blood Type?</FormLabel>
+                  <FormLabel>Blood Type</FormLabel>
                   <FormControl>
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Blood Group" />
+                    <Select  onValueChange={(value) => field.onChange(value)} value={field.value || undefined}>
+                      <SelectTrigger className="w-[180px] border-2 border-[#7D9F0C] bg-white">
+                        <SelectValue  className="placeholder:text-gray-300" placeholder="Blood Group" />
                       </SelectTrigger>
                       <SelectContent>
                         {bloodGroups.map((group, index) => (
@@ -223,9 +325,24 @@ const HealthForm = () => {
                 </FormItem>
               )}
             />
+                    <FormField
+              control={form.control}
+              name="age"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age</FormLabel>
+                  <FormControl>
+                  <Input type="number" min={0} max={130} className="border-2 border-[#7D9F0C] bg-white" placeholder="Age" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            </div>
               <h3 className="text-xl font-medium">
-                List of Medical Conditions that can harm or kill you?
+              Provide a list of medical conditions that may pose serious health risks or be life-threatening
               </h3>
+              <div className="flex flex-col gap-y-4">
               {medicalConditionFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
                   <FormField
@@ -233,9 +350,9 @@ const HealthForm = () => {
                     name={`harmfulMedicalConditions.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Medical Condition {index + 1}</FormLabel>
+                        {/* <FormLabel>Medical Condition {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Condition " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -243,7 +360,7 @@ const HealthForm = () => {
                   />
                   {index !== 0 && (
                     <Button
-                    className="bg-[#1A4E68]"
+                    className="bg-[#1A4E68] hover:bg-[#102f3f]"
                       type="button"
                       onClick={() => removeMedicalCondition(index)}
                     >
@@ -252,8 +369,9 @@ const HealthForm = () => {
                   )}
                 </div>
               ))}
+              </div>
               <Button
-                className="mt-4 bg-[#1A4E68]"
+                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                 type="button"
                 onClick={() => appendMedicalCondition({ name: "" })}
               >
@@ -263,8 +381,7 @@ const HealthForm = () => {
             <div>
               <h3 className="text-xl font-medium">
                 {" "}
-                List of Medications that can harm or kill you, might not do well
-                with or without?
+                Provide a list of medications that may pose serious health risks or be life-threatening
               </h3>
               {medicationFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
@@ -273,9 +390,9 @@ const HealthForm = () => {
                     name={`harmfulMedications.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Medication {index + 1}</FormLabel>
+                        {/* <FormLabel>Medication {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Medication " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -283,7 +400,7 @@ const HealthForm = () => {
                   />
                   {index !== 0 && (
                     <Button
-                    className="bg-[#1A4E68]"
+                    className="bg-[#1A4E68] hover:bg-[#102f3f]"
                       type="button"
                       onClick={() => removeMedication(index)}
                     >
@@ -293,7 +410,7 @@ const HealthForm = () => {
                 </div>
               ))}
               <Button
-                className="mt-4 bg-[#1A4E68]"
+                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                 type="button"
                 onClick={() => appendMedication({ name: "" })}
               >
@@ -303,7 +420,7 @@ const HealthForm = () => {
             <div>
               <h3 className="text-xl font-medium">
                 {" "}
-                List of Allergies that can harm or kill you?
+                Provide a list of allergies that may pose serious health risks or be life-threatening
               </h3>
               {allergyFields.map((field, index) => (
                 <div key={field.id} className="flex items-end gap-x-5">
@@ -312,23 +429,23 @@ const HealthForm = () => {
                     name={`allergies.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Allergy {index + 1}</FormLabel>
+                        {/* <FormLabel>Allergy {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Allery " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   {index !== 0 && (
-                    <Button className="bg-[#1A4E68]" type="button" onClick={() => removeAllergy(index)}>
+                    <Button className="bg-[#1A4E68] hover:bg-[#102f3f]" type="button" onClick={() => removeAllergy(index)}>
                       Remove
                     </Button>
                   )}
                 </div>
               ))}
               <Button
-                className="mt-4 bg-[#1A4E68]"
+                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                 type="button"
                 onClick={() => appendAllergy({ name: "" })}
               >
@@ -340,15 +457,15 @@ const HealthForm = () => {
               name="doNotResusitate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you have a Do Not Resuscitate order?</FormLabel>
+                  <FormLabel className="text-xl font-medium">Do you have a Do-Not-Resuscitate order</FormLabel>
                   <FormControl>
-                    <RadioGroup onChange={field.onChange} defaultValue="false">
+                    <RadioGroup onValueChange={(value) => field.onChange(value === "true")} defaultValue={field.value ? "true" : "false"}>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="true" value="true" />
+                        <RadioGroupItem  value="true" />
                         <Label htmlFor="true">Yes</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="false" value="false" />
+                        <RadioGroupItem  value="false" />
                         <Label htmlFor="false">No</Label>
                       </div>
                     </RadioGroup>
@@ -362,15 +479,15 @@ const HealthForm = () => {
               name="seizureDisorder"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you have a Seizure disorder?</FormLabel>
+                  <FormLabel className="text-xl font-medium">Do you have a Seizure disorder</FormLabel>
                   <FormControl>
-                    <RadioGroup onChange={field.onChange} defaultValue="false">
+                    <RadioGroup onValueChange={(value) => field.onChange(value === "true")} defaultValue={field.value ? "true" : "false"}>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="true" value="true" />
+                        <RadioGroupItem  value="true" />
                         <Label htmlFor="true">Yes</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem id="false" value="false" />
+                        <RadioGroupItem  value="false" />
                         <Label htmlFor="false">No</Label>
                       </div>
                     </RadioGroup>
@@ -384,9 +501,9 @@ const HealthForm = () => {
               name="missingOrgans"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you have any missing organs?</FormLabel>
+                  <FormLabel className="text-xl font-medium">Do you have any missing organs</FormLabel>
                   <FormControl>
-                    <RadioGroup defaultValue="false">
+                    <RadioGroup onValueChange={(value) => field.onChange(value === "true")} defaultValue={field.value ? "true" : "false"}>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem id="organs-true" value="true" />
                         <Label htmlFor="organs-true">Yes</Label>
@@ -402,7 +519,7 @@ const HealthForm = () => {
               )}
             />
             <div>
-              <h3 className="text-xl">Emergency Contacts</h3>
+              <h3 className="text-4xl font-medium">Emergency Contacts</h3>
               {emergencyFields.map((field, index) => (
                 <div key={field.id} className="flex gap-x-6 items-end mt-4">
                   <FormField
@@ -410,11 +527,11 @@ const HealthForm = () => {
                     name={`emergencyContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Emergency Contact {index + 1} Name{" "}
+                        <FormLabel className="text-xl font-medium">
+                        Contact Name
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -425,11 +542,11 @@ const HealthForm = () => {
                     name={`emergencyContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Emergency Contact {index + 1} Number{" "}
+                        <FormLabel className="text-xl font-medium">
+                         Contact Number
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="10 digits" {...field} />
+                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Number" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -437,7 +554,7 @@ const HealthForm = () => {
                   />
                   {index === 1 && (
                     <Button
-                    className="bg-[#1A4E68]"
+                    className="bg-[#1A4E68] hover:bg-[#102f3f]"
                       type="button"
                       onClick={() => removeEmergency(index)}
                     >
@@ -448,7 +565,7 @@ const HealthForm = () => {
               ))}
               {emergencyFields.length < 2 && (
                 <Button
-                  className="mt-4 bg-[#1A4E68]"
+                  className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                   type="button"
                   onClick={() => appendEmergency({ name: "", number: "" })}
                 >
@@ -457,7 +574,7 @@ const HealthForm = () => {
               )}
             </div>
             <div className="">
-              <h3 className="text-xl">Doctor Contacts</h3>
+              <h3 className="text-4xl font-medium">Doctor Contacts</h3>
               {doctorContactsFields.map((field, index) => (
                 <div key={field.id} className="flex gap-x-6 items-end mt-4">
                   <FormField
@@ -465,9 +582,9 @@ const HealthForm = () => {
                     name={`doctorContacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Doctor {index + 1} Name </FormLabel>
+                        <FormLabel className="text-xl font-medium">Doctor's Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="example: xyz" {...field} />
+                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -478,11 +595,11 @@ const HealthForm = () => {
                     name={`doctorContacts.${index}.number`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Doctor {index + 1} Number </FormLabel>
+                        <FormLabel className="text-xl font-medium">Doctor's Number </FormLabel>
                         <FormControl>
-                          <Input
+                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white"
                             type="tel"
-                            placeholder="10 digits"
+                            placeholder="Number"
                             {...field}
                           />
                         </FormControl>
@@ -492,7 +609,7 @@ const HealthForm = () => {
                   />
                   {index === 1 && (
                     <Button
-                    className="bg-[#1A4E68]"
+                    className="bg-[#1A4E68] hover:bg-[#102f3f]"
                       type="button"
                       onClick={() => removeDoctorContacts(index)}
                     >
@@ -503,18 +620,26 @@ const HealthForm = () => {
               ))}
               {doctorContactsFields.length < 2 && (
                 <Button
-                  className="mt-4 bg-[#1A4E68]"
+                  className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                   type="button"
-                  onClick={() => appendDoctorContacts({ name: "", number: "" })}
+                  onClick={() =>{ 
+                    const doc = form.getValues("doctorContacts");
+                    const lastValue = doc[doc.length-1];
+                    if(lastValue.name.length>0 && lastValue.number.length>0){
+                      appendDoctorContacts({ name: "", number: "" })}}
+                    }
                 >
                   Add 1 More
                 </Button>
               )}
             </div>
-            <Button className="bg-[#1A4E68]"  disabled={form.formState.isSubmitting} type="button">
+            <Button className="bg-white border-2 border-[#7D9F0C] text-[1.4rem] font-bold px-12 py-6 text-[#7D9F0C] hover:bg-white" 
+            onClick={()=>console.log(form.getValues())}
+            //  disabled={form.formState.isSubmitting}
+             type="submit"
+             >
               Generate QR Code
             </Button>
-            <QRCodeComponent />
           </form>
         </Form>
       </div>
