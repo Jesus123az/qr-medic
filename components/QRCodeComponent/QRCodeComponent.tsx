@@ -43,9 +43,9 @@ const QRCodeComponent = () => {
   }, []);
 
   return(
-    <div className='flex gap-x-5 items-center self-center translate-x-[12%] '>
-  <div ref={ref} />
-  <div className='flex flex-col items-center gap-y-4'>
+    <div className=' md:flex gap-x-5  md:items-center md:self-center md:translate-x-[12%] '>
+  <div className='w-40 md:w-auto' ref={ref} />
+  <div className='flex mt-5 md:mt-0 flex-col items-center gap-y-4  mx-auto'>
      <Button className='bg-white border-2 border-[#7D9F0C] text-[#7D9F0C] '>Download <Download /></Button>
      <Button className='bg-[#E7FBFF] border-2 border-[#2AA1B7] text-[#2AA1B7] w-fit '>Print <Printer /></Button>
   </div>

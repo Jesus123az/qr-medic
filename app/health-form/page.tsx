@@ -137,6 +137,10 @@ const HealthForm = () => {
     values: z.infer<typeof healthFormSchema>
   ) => {
     try{
+      if(!profile){
+        alert("Please upload a Profile Picture!")
+        return
+      }
       if(user){
         if(user.healthInfo){
           const response = await axios.post(`/api/healthInfo/${user.healthInfo._id}`, values)  
@@ -163,8 +167,7 @@ const HealthForm = () => {
   const getQRCodeTracked = async ()=>{
     try{
       const QRCodeStyling = (await import('qr-code-styling')).default;
-      console.log(user)
-      if(!user ||user.qrCodeGenerated) return
+      if(!user || user.qrCodeGenerated) return
 
       const qrCode = new QRCodeStyling({
         width: 300,
@@ -186,7 +189,6 @@ const HealthForm = () => {
       });
       const qrBlob = await qrCode.getRawData("png")
       if(!qrBlob) return
-      console.log("hello3" + user)
       const formData = new FormData();
       formData.append('image', qrBlob, `qrcode.png`);
       const response = await axios.post(`https://mind-ar-backend-1.onrender.com/process-image/${user?._id}`, formData, {
@@ -204,43 +206,49 @@ const HealthForm = () => {
   }
   const getHealthInfo  = async()=>{
     try{
-      if(!user?.healthInfo) return
-      const response = await axios.get(`/api/users/${user?._id}/healthInfo`);
-      console.log("healthInfo: " )
-      console.log(response.data)
-      const healthInfo = response.data;
-      form.reset(healthInfo);
-      // Update profile image state if it exists
-      if (healthInfo.profileImage) {
-        setProfile(healthInfo.profileImage);
+      if(user?.healthInfo){
+        console.log("HEllo")
+        const response = await axios.get(`/api/healthInfo/${user.healthInfo}`);
+        const healthInfo = response.data;
+        form.reset(healthInfo);
+        // Update profile image state if it exists
+        if (healthInfo.profileImage) {
+          setProfile(healthInfo.profileImage);
+        }
       }
     }catch(err){
       console.error(err)
     }
   }
-  console.log(user)
 
 
   useEffect(()=>{
     if(user){
+      console.log(user)
       getHealthInfo();
       getQRCodeTracked();
     }
   },[user])
+  useEffect(()=>{
+    if(user){
+      console.log(user)
+      getHealthInfo();
+    }
+  },[])
 
   return (
-    <div className="px-[10%] py-8 bg-[#CBE9EF]  flex flex-col justify-center items-center">
+    <div className="md:px-[10%] py-8 bg-[#CBE9EF]  flex flex-col justify-center items-center">
       <h1 className="text-[30px] font-bold">Medical Form</h1>
       <p className="font-medium">It only takes two easy steps!</p>
-      <div className="form-container mt-20  bg-white w-[90%] shadow-lg px-28 py-10 rounded-[31px]">
+      <div className="form-container mt-20  bg-white w-[90%] shadow-lg px-3 md:px-28 py-10 rounded-[31px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div>
-              <div className="step1 flex justify-between">
+              <div className="step1 md:flex justify-between">
                 <div className="flex flex-col">
         <h1 className=" text-3xl font-bold">Step 1</h1>
         <div className="flex gap-x-5 mt-5 h-full ">
-          <div className="flex flex-col h-full justify-between items-center py-1">
+          <div className="hidden md:flex flex-col h-full justify-between items-center py-1">
             <div className="min-w-5 min-h-5 border-2 border-[#14264C] rounded-full"></div>
             <div className="min-w-[1px] max-w-[1px] min-h-5 bg-[#D1D1D1] rounded-full h-[70%]"></div>
             <div className="min-w-5 min-h-5 border-2 border-[#14264C] rounded-full"></div>
@@ -254,14 +262,14 @@ const HealthForm = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input className="border-2 border-[#7D9F0C] bg-white w-96 mt-5"  placeholder="Full Name" {...field} />
+                          <Input className="border-2 border-[#7D9F0C] bg-white md:w-96 mt-5"  placeholder="Full Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                     />
                     </div>
-              <h3 className="text-xl font-medium">Upload your Photo for Verification</h3>
+              <h3 className="text-xl mt-8 md:mt-0 font-medium">Upload your Photo for Verification</h3>
               </div>
               </div>
               </div>
@@ -310,7 +318,7 @@ const HealthForm = () => {
                   <FormLabel>Blood Type</FormLabel>
                   <FormControl>
                     <Select  onValueChange={(value) => field.onChange(value)} value={field.value || undefined}>
-                      <SelectTrigger className="w-[180px] border-2 border-[#7D9F0C] bg-white">
+                      <SelectTrigger className=" border-2 border-[#7D9F0C] bg-white">
                         <SelectValue  className="placeholder:text-gray-300" placeholder="Blood Group" />
                       </SelectTrigger>
                       <SelectContent>
@@ -522,7 +530,7 @@ const HealthForm = () => {
             <div>
               <h3 className="text-4xl font-medium">Emergency Contacts</h3>
               {emergencyFields.map((field, index) => (
-                <div key={field.id} className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="md:flex gap-x-6 items-end mt-4">
                   <FormField
                     control={form.control}
                     name={`emergencyContacts.${index}.name`}
@@ -577,7 +585,7 @@ const HealthForm = () => {
             <div className="">
               <h3 className="text-4xl font-medium">Doctor Contacts</h3>
               {doctorContactsFields.map((field, index) => (
-                <div key={field.id} className="flex gap-x-6 items-end mt-4">
+                <div key={field.id} className="md:flex gap-x-6 items-end mt-4">
                   <FormField
                     control={form.control}
                     name={`doctorContacts.${index}.name`}
@@ -634,9 +642,8 @@ const HealthForm = () => {
                 </Button>
               )}
             </div>
-            <Button className="bg-white border-2 border-[#7D9F0C] text-[1.4rem] font-bold px-12 py-6 text-[#7D9F0C] hover:bg-white" 
-            onClick={()=>console.log(form.getValues())}
-            //  disabled={form.formState.isSubmitting}
+            <Button className={`${form.formState.isSubmitting && "cursor-wait"} bg-white border-2 border-[#7D9F0C] text-[1.4rem] font-bold px-12 py-6 text-[#7D9F0C] hover:bg-white`}
+             disabled={form.formState.isSubmitting}
              type="submit"
              >
               Generate QR Code

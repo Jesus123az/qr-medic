@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(){
    try{
       await connectDB();
-      const healthInfo = getHealthInfo();
+      const healthInfo = await getHealthInfo();
       return NextResponse.json(healthInfo, {status: 200})
    }catch(err){
       return NextResponse.json({error: err}, {status: 400})
