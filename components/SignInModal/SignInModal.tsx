@@ -51,6 +51,7 @@ const SignInModal = () => {
       });
   
       if (response.status !== 200) {
+        alert("Wrong email or password");
         throw new Error("Login failed");
       }
       const user = response.data;
@@ -114,7 +115,7 @@ const SignInModal = () => {
               </FormItem>
             )}
           />
-          <Button className="w-full bg-white border-[#7D9F0C] text-[#7D9F0C] border-2 hover:bg-white" type="submit">Login</Button>
+          <Button disabled={form.formState.isSubmitting} className="w-full bg-white border-[#7D9F0C] text-[#7D9F0C] border-2 hover:bg-white" type="submit">Login</Button>
         </form>
       </Form>
       </div>

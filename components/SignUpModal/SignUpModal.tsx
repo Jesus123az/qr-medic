@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 
 const SignUpModal = () => {
   const {setUser} = useUserStore()
-  const {setShowSignUpModal} = useModalStore(state=>state)
+  const {setShowSignUpModal, setShowSignInModal} = useModalStore(state=>state)
   const router = useRouter();
   const registerUserSchema = z
     .object({
@@ -60,6 +60,7 @@ const SignUpModal = () => {
       console.log(values)
       const response = await axios.post("/api/users",values)
       if (response.status !== 200) {
+        alert("Wrong email or password");
         throw new Error("Login failed");
       }
       const user = response.data;
@@ -87,7 +88,10 @@ const SignUpModal = () => {
           </button>
           <div className='flex gap-x-5 items-center'>
               <span>Already have an account?</span>
-              <Button className='px-2 py-0 h-7'>Log In</Button>
+              <Button onClick={()=>{
+                setShowSignInModal(true)
+                setShowSignUpModal(false)
+          }}  className='px-2 py-0 h-7'>Log In</Button>
             </div>
         </div>
         <div className='flex flex-col  items-center'>
@@ -156,7 +160,7 @@ const SignUpModal = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full bg-white text-[#7D9F0C] border-[#7D9F0C] border-2 hover:bg-white" type="submit">
+            <Button disabled={form.formState.isSubmitting} className="w-full bg-white text-[#7D9F0C] border-[#7D9F0C] border-2 hover:bg-white" type="submit">
               Register
             </Button>
           </form>
