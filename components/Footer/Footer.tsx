@@ -36,7 +36,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-10">
           <div>
             <h4 className="font-bold text-2xl mb-3">Contact Us</h4>
-            <p className="font-medium text-xl">+12345556657</p>
+            <a href="tel:+1-520-734-2881" className="font-medium text-xl hover:underline">+1-520-734-2881</a>
             <p className="font-medium text-xl">Mon-Fri</p>
           </div>
           <div>
