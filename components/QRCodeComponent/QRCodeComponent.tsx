@@ -18,7 +18,7 @@ const QRCodeComponent = () => {
           width: 300,
           height: 300,
           image: qrLogo.src,
-          data: `https://mind-ar-backend-1.onrender.com/ar-app?id=${user?._id}`,
+          data: `https://mind-ar-backend-production.up.railway.app/ar-app?id=${user?._id}`,
           dotsOptions: {
             color: "#072138",
             type: "rounded"
