@@ -141,9 +141,6 @@ const Navbar = () => {
                   <SelectItem className="text-lg" value="english">
                     English EN
                   </SelectItem>
-                  <SelectItem className="text-lg" value="french">
-                    French FR
-                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
