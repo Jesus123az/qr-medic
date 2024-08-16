@@ -282,7 +282,7 @@ const HealthForm = () => {
               }
                 </div>
                 <CldUploadButton
-            uploadPreset="med-ar"
+            uploadPreset="qrmedic"
             onSuccess={(result) => {
               form.setValue(
                 "profileImage",

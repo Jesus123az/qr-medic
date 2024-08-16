@@ -60,7 +60,7 @@ const SignUpModal = () => {
       console.log(values)
       const response = await axios.post("/api/users",values)
       if (response.status !== 200) {
-        alert("Wrong email or password");
+        alert("Account already exists");
         throw new Error("Login failed");
       }
       const user = response.data;

@@ -20,13 +20,10 @@ const Footer = () => {
             </div>
           <p className="text-md ">&copy; 2024 QR Medic, Inc.</p>
           <div className="flex justify-end mt-4 space-x-4">
-            <a href="#" aria-label="Instagram" className="text-white hover:text-gray-200">
+            <a href="https://www.facebook.com/share/BagzxqpqXCEzN1AS/?mibextid=qi2Omg" aria-label="Instagram" className="text-white hover:text-gray-200">
               <Image className="bg-white rounded-full" src={facebook} width={42} height={42} alt="social-media-link" />
             </a>
-            <a href="#" aria-label="Facebook" className="text-white hover:text-gray-200">
-              <Image src={twitter} width={42} height={42} alt="social-media-link" />
-            </a>
-            <a href="#" aria-label="Twitter" className="text-white hover:text-gray-200">
+            <a href="https://www.instagram.com/qr_medic?igsh=aDZnMHo1bWlpY2Nn" aria-label="Twitter" className="text-white hover:text-gray-200">
               <Image className="bg-white rounded-full" src={instagram} width={42} height={42} alt="social-media-link" />
             </a>
           </div>

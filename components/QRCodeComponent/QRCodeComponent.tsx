@@ -72,10 +72,10 @@ const QRCodeComponent = () => {
     <div className='md:flex gap-x-5 md:items-center md:self-center md:translate-x-[12%]'>
       <div className='w-40 md:w-auto' ref={ref} />
       <div className='flex mt-5 md:mt-0 flex-col items-center gap-y-4 mx-auto'>
-         <Button className='bg-white border-2 border-[#7D9F0C] text-[#7D9F0C]' onClick={handleDownload}>
+         <Button className='bg-white hover:bg-white border-2 border-[#7D9F0C] text-[#7D9F0C]' onClick={handleDownload}>
            Download <Download />
          </Button>
-         <Button className='bg-[#E7FBFF] border-2 border-[#2AA1B7] text-[#2AA1B7] w-fit' onClick={handlePrint}>
+         <Button className='bg-[#E7FBFF] hover:bg-white border-2 border-[#2AA1B7] text-[#2AA1B7] w-fit' onClick={handlePrint}>
            Print <Printer />
          </Button>
       </div>
