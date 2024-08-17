@@ -173,7 +173,7 @@ const HealthForm = () => {
         width: 300,
         height: 300,
         image: qrLogo.src,
-        data: `https://https://mind-ar-backend-production-3704.up.railway.app/ar-app?id=${user?._id}`,
+        data: `https://mind-ar-backend-production-3704.up.railway.app/ar-app?id=${user?._id}`,
         dotsOptions: {
           color: "#072138",
           type: "rounded"
@@ -191,7 +191,7 @@ const HealthForm = () => {
       if(!qrBlob) return
       const formData = new FormData();
       formData.append('image', qrBlob, `qrcode.png`);
-      const response = await axios.post(`https://https://mind-ar-backend-production-3704.up.railway.app/process-image/${user?._id}`, formData, {
+      const response = await axios.post(`https://mind-ar-backend-production-3704.up.railway.app/process-image/${user?._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
