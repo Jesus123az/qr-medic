@@ -5,9 +5,14 @@ import twitter from "@/assets/Twitter.png"
 import instagram from "@/assets/Instagram.png"
 import Image from "next/image";
 import logo from "@/assets/logo.png"
+import { usePathname, useRouter } from "next/navigation";
+import { useModalStore } from "@/store/modal/ModalStore";
 
 
 const Footer = () => {
+  const {setShowSignInModal, setShowSignUpModal} = useModalStore()
+  const router = useRouter();
+  const path = usePathname();
   return (
     <footer style={{background: "linear-gradient(115.49deg, #2AA1B7 -3.97%, #1A4E68 107.48%)"}}
      className=" contact  text-white p-8"
@@ -39,6 +44,7 @@ const Footer = () => {
             <a href="tel:+1-520-734-2881" className="font-medium text-xl hover:underline">+1-520-734-2881</a>
             <p className="font-medium text-xl">Mon-Fri</p>
           </div>
+            {path==="/" && 
           <div>
             <h4 className="font-bold text-2xl mb-3">Company</h4>
             <ul>
@@ -48,13 +54,19 @@ const Footer = () => {
               <li><ScrollLink to="footer"  duration={500} smooth={true} className="hover:underline cursor-pointer font-medium text-xl">Contact Us</ScrollLink></li>
             </ul>
           </div>
+            }
           <div>
             <h4 className="font-bold text-2xl mb-3">Customer</h4>
             <ul>
-              <li><span onClick={()=>{}} className="hover:underline cursor-pointer font-medium text-xl" >Account</span></li>
-              <li><span onClick={()=>{}} className="hover:underline cursor-pointer font-medium text-xl" >Log in</span></li>
-              <li><span onClick={()=>{}} className="hover:underline cursor-pointer font-medium text-xl" >Sign up</span></li>
-              <li><span onClick={()=>{}} className="hover:underline cursor-pointer font-medium text-xl" >Download QR code</span></li>
+              {path==="/" && 
+              <li><span onClick={()=>{setShowSignInModal(true)}} className="hover:underline cursor-pointer font-medium text-xl" >Log in</span></li>
+            }
+              {path==="/" && 
+              <li><span onClick={()=>{setShowSignUpModal(true)}} className="hover:underline cursor-pointer font-medium text-xl" >Sign up</span></li>
+            }
+              {path!=="/" && 
+              <li><span onClick={()=>{router.push("qr-code")}} className="hover:underline cursor-pointer font-medium text-xl" >Download QR code</span></li>
+            }
             </ul>
           </div>
         </div>
