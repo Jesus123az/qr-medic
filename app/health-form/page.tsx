@@ -140,7 +140,7 @@ const HealthForm = () => {
         alert("Please upload a Profile Picture!")
         return
       }
-      if(!form.getValues("bloodType")){
+      if(!form.getValues("bloodType") || (!form.getValues("bloodType").length < 1)){
         alert("Please select your blood group")
         return
       }
