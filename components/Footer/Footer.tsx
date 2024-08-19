@@ -26,6 +26,9 @@ const Footer = () => {
             <a href="https://www.instagram.com/qr_medic?igsh=aDZnMHo1bWlpY2Nn" aria-label="Twitter" className="text-white hover:text-gray-200">
               <Image className="bg-white rounded-full" src={instagram} width={42} height={42} alt="social-media-link" />
             </a>
+            <a href="https://x.com/qrmedic" aria-label="Twitter" className="text-white hover:text-gray-200">
+              <Image className="bg-white rounded-full" src={twitter} width={42} height={42} alt="social-media-link" />
+            </a>
           </div>
         </div>
         
