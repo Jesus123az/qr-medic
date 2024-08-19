@@ -60,6 +60,8 @@ const SignInModal = () => {
       onClose();
       router.push("/health-form");
     } catch (e) {
+      
+      alert("Wrong email or password");
       console.error(e);
       // Handle error, e.g., show a notification to the user
     }
