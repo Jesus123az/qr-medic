@@ -56,7 +56,6 @@ const SignInModal = () => {
       }
       const user = response.data;
       // Set the user state in Zustand
-      console.log(user)
       setUser(user);    // Redirect to the desired page after login
       onClose();
       router.push("/health-form");

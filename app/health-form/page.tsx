@@ -207,7 +207,6 @@ const HealthForm = () => {
   const getHealthInfo  = async()=>{
     try{
       if(user?.healthInfo){
-        console.log("HEllo")
         const response = await axios.get(`/api/healthInfo/${user.healthInfo}`);
         const healthInfo = response.data;
         form.reset(healthInfo);
@@ -224,14 +223,12 @@ const HealthForm = () => {
 
   useEffect(()=>{
     if(user){
-      console.log(user)
       getHealthInfo();
       getQRCodeTracked();
     }
   },[user])
   useEffect(()=>{
     if(user){
-      console.log(user)
       getHealthInfo();
     }
   },[])
@@ -293,7 +290,7 @@ const HealthForm = () => {
               );
             }}
             options={{
-              sources: ["local"],
+              sources: ["local", "camera"],
               clientAllowedFormats: ['jpeg', 'jpg', 'png'],
               cropping: true,
               croppingAspectRatio: 1,

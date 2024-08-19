@@ -57,7 +57,6 @@ const SignUpModal = () => {
     values: z.infer<typeof registerUserSchema>
   ) => {
     try{
-      console.log(values)
       const response = await axios.post("/api/users",values)
       if (response.status !== 200) {
         alert("Account already exists");
