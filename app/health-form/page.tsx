@@ -82,7 +82,6 @@ const HealthForm = () => {
     profileImage: null,
     seizureDisorder: false,
     missingOrgans: false,
-    bloodType: "",
     emergencyContacts: [{ name: "", number: "" }],
     doctorContacts: [{ name: "", number: "" }],
     },
@@ -139,6 +138,10 @@ const HealthForm = () => {
     try{
       if(!profile){
         alert("Please upload a Profile Picture!")
+        return
+      }
+      if(!form.getValues("bloodType")){
+        alert("Please select your blood group")
         return
       }
       if(user){

@@ -68,8 +68,8 @@ const SignInModal = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-cyan-100 bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-lg relative">
+    <div className="fixed z-30 inset-0 bg-cyan-100 bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white z-30 rounded-3xl p-8 w-full max-w-md shadow-lg relative">
         <button onClick={onClose} className="absolute top-4 left-4 text-gray-400 hover:text-gray-600">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
