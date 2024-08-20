@@ -41,17 +41,17 @@ const HealthForm = () => {
   const {user, setUser}= useUserStore();
   const [profile, setProfile] = useState<string | null>(null);
   const contactSchema = z.object({
-    name: z.string().min(3),
-    number: z.string().regex(/^\d{10}$/, { message: "Invalid phone number" }),
+    name: z.string().min(3, {message: "Name cannot have less than 3 characters"}).max(20,{ message : "Name cannot exceed 20 charactes."}),
+    number: z.string().regex(/^\d{10}$/, { message: "Invalid phone number. (Number should have 10 characters) " }),
   });
   const allergySchema = z.object({
-    name: z.string().min(3),
+    name: z.string().min(3, {message: "Allergy name cannot have less than 3 characters"}).max(20,{ message : "Allergy name cannot exceed 20 charactes."}),
   });
   const medicationSchema = z.object({
-    name: z.string().min(3),
+    name: z.string().min(3, {message: "Medication name cannot have less than 3 characters"}).max(20,{ message : "Medication name cannot exceed 20 charactes."}),
   });
   const medicalConditionSchema = z.object({
-    name: z.string().min(3),
+    name: z.string().min(3, {message: "Condition name cannot have less than 3 characters"}).max(20,{ message : "Condition name cannot exceed 20 charactes."}),
   });
 
   const healthFormSchema = z.object({
@@ -176,7 +176,7 @@ const HealthForm = () => {
         width: 300,
         height: 300,
         image: qrLogo.src,
-        data: `https://mind-ar-backend-production-3704.up.railway.app/ar-app?id=${user?._id}`,
+        data: `https://ar.qrmedic.org/ar-app?id=${user?._id}`,
         dotsOptions: {
           color: "#072138",
           type: "rounded"
@@ -194,7 +194,7 @@ const HealthForm = () => {
       if(!qrBlob) return
       const formData = new FormData();
       formData.append('image', qrBlob, `qrcode.png`);
-      const response = await axios.post(`https://mind-ar-backend-production-3704.up.railway.app/process-image/${user?._id}`, formData, {
+      const response = await axios.post(`https://ar.qrmedic.org/process-image/${user?._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -380,9 +380,16 @@ const HealthForm = () => {
               ))}
               </div>
               <Button
-                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
+                className={`mt-4 bg-[#1A4E68] hover:bg-[#102f3f] ${form.getValues("harmfulMedicalConditions").length<5? "" : "hidden"}`}
                 type="button"
-                onClick={() => appendMedicalCondition({ name: "" })}
+                onClick={() =>{
+                  if(form.getValues("harmfulMedicalConditions").length<5){
+                    appendMedicalCondition({ name: "" })
+                  }else{
+                    alert("You cannot add more than 5 conditions")
+                  }
+                  }
+                } 
               >
                 Add 1 More
               </Button>
@@ -419,9 +426,16 @@ const HealthForm = () => {
                 </div>
               ))}
               <Button
-                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
+                className={`mt-4 bg-[#1A4E68] hover:bg-[#102f3f] ${form.getValues("harmfulMedications").length<5? "" : "hidden"}`}
                 type="button"
-                onClick={() => appendMedication({ name: "" })}
+                onClick={() =>{
+                  if(form.getValues("harmfulMedications").length<5){
+                    appendMedication({ name: "" })
+                  }else{
+                    alert("You cannot add more than 5 medications")
+                  }
+                  }
+                } 
               >
                 Add 1 More
               </Button>
@@ -454,9 +468,16 @@ const HealthForm = () => {
                 </div>
               ))}
               <Button
-                className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
+                className={`mt-4 bg-[#1A4E68] hover:bg-[#102f3f] ${form.getValues("allergies").length<5? "" : "hidden"}`}
                 type="button"
-                onClick={() => appendAllergy({ name: "" })}
+                onClick={() =>{
+                  if(form.getValues("allergies").length<5){
+                    appendAllergy({ name: "" })
+                  }else{
+                    alert("You cannot add more than 5 allergies")
+                  }
+                  }
+                } 
               >
                 Add 1 More
               </Button>
@@ -572,11 +593,16 @@ const HealthForm = () => {
                   )}
                 </div>
               ))}
-              {emergencyFields.length < 2 && (
+              {emergencyFields.length < 3 && (
                 <Button
                   className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                   type="button"
-                  onClick={() => appendEmergency({ name: "", number: "" })}
+                  onClick={() =>{ 
+                    const emer = form.getValues("emergencyContacts");
+                    const lastValue = emer[emer.length-1];
+                    if(lastValue.name.length>0 && lastValue.number.length>0){
+                      appendEmergency({ name: "", number: "" })}}
+                    }
                 >
                   Add 1 More
                 </Button>
@@ -627,7 +653,7 @@ const HealthForm = () => {
                   )}
                 </div>
               ))}
-              {doctorContactsFields.length < 2 && (
+              {doctorContactsFields.length < 3 && (
                 <Button
                   className="mt-4 bg-[#1A4E68] hover:bg-[#102f3f]"
                   type="button"
