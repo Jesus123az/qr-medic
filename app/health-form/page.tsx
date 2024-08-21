@@ -146,7 +146,7 @@ const HealthForm = () => {
       }
       if(user){
         if(user.healthInfo){
-          const response = await axios.post(`/api/healthInfo/${user.healthInfo._id}`, values)  
+          const response = await axios.put(`/api/healthInfo/${user._id}`, values)  
           if(response.status!== 200){
             throw new Error("Error occured")
           }
