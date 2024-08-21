@@ -262,7 +262,7 @@ const HealthForm = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input className="border-2 border-[#7D9F0C] bg-white md:w-96 mt-5"  placeholder="Full Name" {...field} />
+                          <Input maxLength={20} className="border-2 border-[#7D9F0C] bg-white md:w-96 mt-5"  placeholder="Full Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -361,7 +361,7 @@ const HealthForm = () => {
                       <FormItem>
                         {/* <FormLabel>Medical Condition {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Condition " + (index+1)} {...field} />
+                          <Input maxLength={20} className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Condition " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -408,7 +408,7 @@ const HealthForm = () => {
                       <FormItem>
                         {/* <FormLabel>Medication {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Medication " + (index+1)} {...field} />
+                          <Input maxLength={20} className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Medication " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -454,7 +454,7 @@ const HealthForm = () => {
                       <FormItem>
                         {/* <FormLabel>Allergy {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Allery " + (index+1)} {...field} />
+                          <Input maxLength={20} className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Allery " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -561,7 +561,7 @@ const HealthForm = () => {
                         Contact Name
                         </FormLabel>
                         <FormControl>
-                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
+                          <Input maxLength={20} className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -576,7 +576,7 @@ const HealthForm = () => {
                          Contact Number
                         </FormLabel>
                         <FormControl>
-                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Number" {...field} />
+                          <Input maxLength={20} className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Number" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -619,7 +619,7 @@ const HealthForm = () => {
                       <FormItem>
                         <FormLabel className="text-xl font-medium">Doctor&apos;s Name</FormLabel>
                         <FormControl>
-                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
+                          <Input maxLength={20} className="border-2 w-[18rem] border-[#7D9F0C] bg-white" placeholder="Name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -632,7 +632,7 @@ const HealthForm = () => {
                       <FormItem>
                         <FormLabel className="text-xl font-medium">Doctor&apos;s Number </FormLabel>
                         <FormControl>
-                          <Input className="border-2 w-[18rem] border-[#7D9F0C] bg-white"
+                          <Input maxLength={20} className="border-2 w-[18rem] border-[#7D9F0C] bg-white"
                             type="tel"
                             placeholder="Number"
                             {...field}
