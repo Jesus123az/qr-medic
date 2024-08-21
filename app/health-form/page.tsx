@@ -48,7 +48,7 @@ const HealthForm = () => {
     name: z.string().min(3, {message: "Allergy name cannot have less than 3 characters"}).max(20,{ message : "Allergy name cannot exceed 20 charactes."}),
   });
   const medicationSchema = z.object({
-    name: z.string().min(3, {message: "Medication name cannot have less than 3 characters"}).max(20,{ message : "Medication name cannot exceed 20 charactes."}),
+    name: z.string().min(3, {message: "Medication name cannot have less than 3 characters"}).max(25,{ message : "Medication name cannot exceed 20 charactes."}),
   });
   const medicalConditionSchema = z.object({
     name: z.string().min(3, {message: "Condition name cannot have less than 3 characters"}).max(20,{ message : "Condition name cannot exceed 20 charactes."}),
