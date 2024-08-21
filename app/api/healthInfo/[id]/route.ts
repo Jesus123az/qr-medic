@@ -44,10 +44,13 @@ export async function PUT(req: NextRequest, {params}: Params){
     try{
         await connectDB();
         const id = params.id
+        console.log("1")
         const user = await getUserByID(id) as User
+        console.log("2")
         const healthInfoId = user?.healthInfo? user?.healthInfo._id: ""
         const healthInfo = await req.json()
         const newHealthInfo = updateHealthInfo(healthInfoId, healthInfo)
+        console.log("3")
         return NextResponse.json(newHealthInfo, {status: 200})
     }catch(err){
         return NextResponse.json({error: err}, {status: 400})
