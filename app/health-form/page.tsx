@@ -408,7 +408,7 @@ const HealthForm = () => {
                       <FormItem>
                         {/* <FormLabel>Medication {index + 1}</FormLabel> */}
                         <FormControl>
-                          <Input maxLength={20} className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Medication " + (index+1)} {...field} />
+                          <Input maxLength={25} className="border-2 border-[#7D9F0C] mt-7 bg-white" placeholder={"Medication " + (index+1)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
