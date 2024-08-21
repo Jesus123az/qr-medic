@@ -59,7 +59,6 @@ const SignUpModal = () => {
     try{
       const response = await axios.post("/api/users",values)
       if (response.status !== 200) {
-        alert("Account already exists");
         throw new Error("Login failed");
       }
       const user = response.data;
@@ -68,6 +67,7 @@ const SignUpModal = () => {
       onClose();
       router.push("/health-form");
     } catch (e) {
+      alert("Account already exists");
       console.error(e);
       // Handle error, e.g., show a notification to the user
     }

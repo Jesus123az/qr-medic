@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest, {params}: Params){
         console.log("2")
         const healthInfoId = user?.healthInfo? user?.healthInfo._id: ""
         const healthInfo = await req.json()
-        const newHealthInfo = updateHealthInfo(healthInfoId, healthInfo)
+        const newHealthInfo = await updateHealthInfo(healthInfoId, healthInfo)
         console.log("3")
         return NextResponse.json(newHealthInfo, {status: 200})
     }catch(err){
