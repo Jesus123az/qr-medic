@@ -32,8 +32,10 @@ const Navbar = () => {
     try {
       const response = await axios.post("/api/logout");
       if(response.status === 200){
-        setUser(null);
-        router.push("/");
+        setTimeout(()=>{
+          setUser(null);
+          router.push("/");
+        },300)
       }
     } catch (err) {
       console.error(err);
