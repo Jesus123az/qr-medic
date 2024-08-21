@@ -55,7 +55,7 @@ const HealthForm = () => {
   });
 
   const healthFormSchema = z.object({
-    legalName: z.string().min(3),
+    legalName: z.string().min(3).max(20,{ message : "Name cannot exceed 20 charactes."}),
     age: z.string().min(0).max(130),
     harmfulMedicalConditions: z.array(medicalConditionSchema),
     harmfulMedications: z.array(medicationSchema),
