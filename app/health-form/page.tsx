@@ -11,6 +11,18 @@ import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
 import { User } from "lucide-react";
 import qrLogo from "@/assets/qr-logo.png"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../components/ui/alert-dialog"
+
 
 
 
@@ -40,6 +52,7 @@ const HealthForm = () => {
   const router = useRouter()
   const {user, setUser}= useUserStore();
   const [profile, setProfile] = useState<string | null>(null);
+  const [accountDelPass, setAccountDelPass] = useState<string | null>(null);
   const contactSchema = z.object({
     name: z.string().min(3, {message: "Name cannot have less than 3 characters"}).max(20,{ message : "Name cannot exceed 20 charactes."}),
     number: z.string().regex(/^\d{10}$/, { message: "Invalid phone number. (Number should have 10 characters) " }),
@@ -207,6 +220,26 @@ const HealthForm = () => {
       console.error(err)
     }
   }
+
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.post(`/api/users/${user?._id}`, {accountDelPass});
+      if(response.status === 200){
+        setTimeout(()=>{
+          setUser(null);
+          router.push("/");
+        },300)
+      }else{
+        throw new Error("There was an error deleting the account")
+      }
+    } catch (err) {
+      alert("Incorrect Password");
+      console.error(err);
+    }
+  };
+
+
   const getHealthInfo  = async()=>{
     try{
       if(user?.healthInfo){
@@ -668,12 +701,34 @@ const HealthForm = () => {
                 </Button>
               )}
             </div>
+            <div className="flex gap-4 flex-wrap">
             <Button className={`${form.formState.isSubmitting && "cursor-wait"} bg-white border-2 border-[#7D9F0C] text-[1.4rem] font-bold px-12 py-6 text-[#7D9F0C] hover:bg-white`}
              disabled={form.formState.isSubmitting}
              type="submit"
              >
               Generate QR Code
             </Button>
+
+    <AlertDialog>
+  <AlertDialogTrigger className={`${form.formState.isSubmitting && "cursor-wait"} bg-white border-2 rounded-md border-[#F05656] text-[1.4rem] font-bold px-12 py-2 text-[#F05656] hover:bg-white`} type="button">Delete Account</AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle className="text-xl  text-red-600">Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription className="text-lg text-red-600">
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers. <br /> <br />Enter your password to continue:
+      </AlertDialogDescription>
+
+      <Input onChange={(e)=>setAccountDelPass(e.target.value)} type="password"></Input>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel className="bg-white">Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={handleDelete} className="bg-[#F05656] hover:bg-[#F05656]">Delete Account</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+</div>
+    
           </form>
         </Form>
       </div>

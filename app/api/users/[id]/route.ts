@@ -2,6 +2,7 @@ import { connectDB } from "@/backend/db/connect";
 import { deleteUser, getUserByID } from "@/backend/services/user";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt"
 
 export async function GET(
   req: NextRequest,
@@ -19,17 +20,24 @@ export async function GET(
     return NextResponse.json("error " + err, { status: 400 });
   }
 }
-export async function DELETE(
+export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
     const id = params.id;
+    const {accountDelPass} = await req.json();
     const user = await getUserByID(id);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const isMatch = await bcrypt.compare(accountDelPass, user.password);
+    if (!isMatch) {
+      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    }
+
     await deleteUser(id);
     const response = NextResponse.json(
       { message: "Delete successful" },
