@@ -67,11 +67,6 @@ const Navbar = () => {
           {user ? (
             <>
               <li>
-                <Link className="hover:underline" href={"/"}>
-                  Home
-                </Link>
-              </li>
-              <li>
                 <Link className="hover:underline" href={"/health-form"}>
                   Medical Form
                 </Link>
@@ -177,11 +172,6 @@ const Navbar = () => {
           <ul className="flex flex-col gap-y-4 text-xl font-medium">
             {user ? (
               <>
-                <li>
-                  <Link className="hover:underline" href={"/"}>
-                    Home
-                  </Link>
-                </li>
                 <li>
                   <Link className="hover:underline" href={"/health-form"}>
                     Medical Form
