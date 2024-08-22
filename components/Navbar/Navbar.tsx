@@ -21,6 +21,21 @@ import { useRouter } from "next/navigation";
 import logo from "@/assets/logo.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog"
+
+
+
 
 const Navbar = () => {
   const { showSignInModal, setShowSignInModal } = useModalStore();
@@ -38,6 +53,23 @@ const Navbar = () => {
         },300)
       }
     } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`/api/users/${user?._id}`);
+      if(response.status === 200){
+        setTimeout(()=>{
+          setUser(null);
+          router.push("/");
+        },300)
+      }else{
+        throw new Error("There was an error deleting the account")
+      }
+    } catch (err) {
+      alert("There was an error deleting the account");
       console.error(err);
     }
   };
@@ -147,11 +179,34 @@ const Navbar = () => {
           <li>
             {user ? (
               <div className="flex gap-x-4 items-center">
-              <Button
-                className="text-lg rounded-2xl py-2 px-4 font-medium bg-white hover:bg-white text-[#14264C]"
-              >
-                {user.name} <User />
-              </Button>
+             <HoverCard>
+  <HoverCardTrigger className="text-lg cursor-pointer rounded-2xl py-2 px-4 flex gap-x-3 font-medium bg-white hover:bg-white text-[#14264C]">
+                  {user.name} <User />
+                </HoverCardTrigger>
+  <HoverCardContent className="text-base w-fit">
+    Click here to Delete you Account: <br />
+    <AlertDialog>
+  <AlertDialogTrigger><Button variant={"destructive"}>Delete Account</Button></AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle className="text-xl">Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription className="text-base">
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel className="bg-white">Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={handleDelete} className="bg-[#F05656] hover:bg-[#F05656]">Delete Account</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+
+    
+
+    
+  </HoverCardContent>
+</HoverCard>
               <span onClick={handleSignOut} className="hover:underline cursor-pointer text-lg font-medium">Log Out</span>
               </div>
             ) : (
@@ -258,11 +313,28 @@ const Navbar = () => {
             <li>
               {user ? (
                 <div className="flex flex-col gapy-5">
-                <Button
-                  className="text-lg rounded-2xl py-2 px-4 font-medium bg-white hover:bg-white text-[#14264C]"
-                >
+               
+  <Button className="text-lg rounded-2xl py-2 px-4 flex gap-x-3 font-medium bg-white hover:bg-white text-[#14264C]">
                   {user.name} <User />
                 </Button>
+    <AlertDialog>
+  <AlertDialogTrigger><Button variant={"destructive"}>Delete Account</Button></AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle className="text-xl">Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription className="text-base">
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel className="bg-white">Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={handleDelete} className="bg-[#F05656] hover:bg-[#F05656]">Delete Account</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog> 
+
+               
               <span onClick={handleSignOut} className="hover:underline cursor-pointer text-lg font-medium">Log Out</span>
               </div>
             ) : (

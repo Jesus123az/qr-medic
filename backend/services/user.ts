@@ -14,3 +14,5 @@ export const updateUserhealthInfo = (userId: string, healthInfoId: string)=>{
     const user = User.findByIdAndUpdate(userId, {healthInfo: healthInfoId})
     return user
 }
+
+export const deleteUser = (id: string)=>User.findByIdAndDelete(id)
