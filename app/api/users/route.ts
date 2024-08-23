@@ -5,19 +5,9 @@ import { userSchema } from "@/backend/validators/user";
 import bcrypt from "bcrypt";
 import { User } from "@/backend/types/user";
 import { sign } from "@/backend/middlewares/jose";
-import { nanoid } from "nanoid";
+
 
 const saltRounds = 10;
-
-export async function GET() {
-  try {
-    await connectDB();
-    const users = await getUsers();
-    return NextResponse.json(users, { status: 200 });
-  } catch (err) {
-    return NextResponse.json({ err }, { status: 400 });
-  }
-}
 
 export async function POST(req: NextRequest) {
   try {
