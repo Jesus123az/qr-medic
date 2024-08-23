@@ -1,6 +1,7 @@
 
 "use client";
 import QRCodeComponent from '@/components/QRCodeComponent/QRCodeComponent'
+import Link from 'next/link';
 
 const QRCodePage = () => {
   return (
@@ -12,7 +13,7 @@ const QRCodePage = () => {
          <div className='flex gap-x-5 justify-between items-center w-full'>
          <div className='min-h-[1px] max-h-[1px] w-full bg-[#C1C1C1]'></div>
          <span className='text-nowrap text-center font-semibold text-[#6F6F6F]'>Want to redo <br />
-         your information? Link</span>
+         your information?<Link href={"/health-form"} className="underline cursor-pointer">Click Here</Link></span>
          <div className='min-h-[1px] max-h-[1px] w-full bg-[#C1C1C1]'></div>
          </div>
          </div>
