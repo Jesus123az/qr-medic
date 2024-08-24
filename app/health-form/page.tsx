@@ -46,7 +46,7 @@ import axios from "axios";
 import { useUserStore } from "@/store/user/userStore";
 import { useRouter } from "next/navigation";
 
-const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"];
 
 const HealthForm = () => {
   const router = useRouter()
