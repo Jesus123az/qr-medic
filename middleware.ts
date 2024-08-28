@@ -9,7 +9,7 @@ export const middleware = async (request: NextRequest)=>{
  if(authToken && secret){
     const user = await verify(authToken, secret)
     if(user){
-        if(path === "/" ){
+        if(path === "/" || path === "/forgot-password" ){
             return NextResponse.redirect(new URL("/health-form", request.url))
         }
        
@@ -17,7 +17,7 @@ export const middleware = async (request: NextRequest)=>{
 
  }
  else{
-     if(path !== "/" ){
+     if(path === "/health-form" || path === "/qr-code" ){
         return NextResponse.redirect(new URL("/", request.url))
     }
  }

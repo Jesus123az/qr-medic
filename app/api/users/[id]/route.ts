@@ -1,8 +1,9 @@
 import { connectDB } from "@/backend/db/connect";
-import { deleteUser, getUserByID } from "@/backend/services/user";
+import { deleteUser, getUserByEmail, getUserByID } from "@/backend/services/user";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
+import admin from "@/utils/firebase/admin";
 
 export async function GET(
   req: NextRequest,
@@ -27,18 +28,20 @@ export async function POST(
   try {
     await connectDB();
     const id = params.id;
-    const {accountDelPass} = await req.json();
-    const user = await getUserByID(id);
+    const { idToken } = await req.json();
+    if (!idToken) {
+       return NextResponse.json({ error: "UnAuthorized" }, { status: 401 });
+    }
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const email = decodedToken.email as string;
+    const user = await getUserByEmail(email);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    const isMatch = await bcrypt.compare(accountDelPass, user.password);
-    if (!isMatch) {
-      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
-    }
-
+    const userRecord = await admin.auth().getUserByEmail(email);
     await deleteUser(id);
+    await admin.auth().deleteUser(userRecord.uid);
+    
     const response = NextResponse.json(
       { message: "Delete successful" },
       { status: 200 }

@@ -19,6 +19,7 @@ import Image from "next/image";
 import axios from "axios"
 import { useUserStore } from "@/store/user/userStore";
 import { useRouter } from "next/navigation";
+import { registerUser } from '@/utils/firebase/firebaseUtils';
 
 
 
@@ -57,6 +58,7 @@ const SignUpModal = () => {
     values: z.infer<typeof registerUserSchema>
   ) => {
     try{
+      await registerUser(values.email, values.password)
       const response = await axios.post("/api/users",values)
       if (response.status !== 200) {
         throw new Error("Login failed");

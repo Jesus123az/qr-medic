@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from 'axios';
 import { useUserStore } from '@/store/user/userStore';
 import { useRouter } from 'next/navigation';
+import { loginUser } from '@/utils/firebase/firebaseUtils';
 
 const SignInModal = () => {
   const {setUser} = useUserStore(state=>state)
@@ -44,7 +45,10 @@ const SignInModal = () => {
   ) => {
 
     try {
-      const response = await axios.post("/api/login", values, {
+      const userCredential = await loginUser(values.email, values.password)
+
+      const idToken = await userCredential?.getIdToken();
+      const response = await axios.post("/api/login", {token: idToken}, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -118,6 +122,10 @@ const SignInModal = () => {
           />
           <Button disabled={form.formState.isSubmitting} className="w-full bg-white border-[#7D9F0C] text-[#7D9F0C] border-2 hover:bg-white" type="submit">Login</Button>
         </form>
+        <p className='text-gray-600 text-center mt-2'>Forgot you password? <span className='underline cursor-pointer text-slate-700' onClick={()=>{
+          onClose()
+          router.push("/forgot-password")
+          }}>Click here</span></p>
       </Form>
       </div>
     </div>

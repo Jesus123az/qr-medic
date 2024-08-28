@@ -3,6 +3,7 @@ import { Inter, Red_Hat_Text } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import { Toaster } from "@/components/ui/toaster";
 // import { usePathname } from "next/navigation";
 
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <Toaster />
         </body>
     </html>
   );

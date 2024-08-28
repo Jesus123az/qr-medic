@@ -45,6 +45,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useUserStore } from "@/store/user/userStore";
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/utils/firebase/firebaseUtils";
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -224,7 +225,12 @@ const HealthForm = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.post(`/api/users/${user?._id}`, {accountDelPass});
+      if(!user?.email || !accountDelPass){
+        throw new Error("User not found")
+      }
+      const userCredential = await loginUser(user?.email, accountDelPass)
+      const idToken = await userCredential?.getIdToken();
+      const response = await axios.post(`/api/users/${user?._id}`, {idToken});
       if(response.status === 200){
         setTimeout(()=>{
           setUser(null);

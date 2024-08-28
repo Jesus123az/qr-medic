@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/backend/db/connect";
 import { getUserByEmail } from "@/backend/services/user"; // Function to find user by email
-import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
+import admin from "@/utils/firebase/admin";
 
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    const { email, password } = await req.json();
+    const { token: idToken } = await req.json();
+    if (!idToken) {
+       return NextResponse.json({ error: "UnAuthorized" }, { status: 401 });
+    }
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const email = decodedToken.email as string;
 
     // Find the user by email
     const user = await getUserByEmail(email);
@@ -16,10 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Compare the provided password with the stored hash
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
-    }
+
 
     // Generate JWT
     const token = await new SignJWT({ id: user._id })
