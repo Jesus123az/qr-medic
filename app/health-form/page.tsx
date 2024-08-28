@@ -47,7 +47,7 @@ import { useUserStore } from "@/store/user/userStore";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/utils/firebase/firebaseUtils";
 
-const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"];
 
 const HealthForm = () => {
   const router = useRouter()
