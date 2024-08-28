@@ -73,7 +73,7 @@ const Footer = () => {
 
         <div className="mt-6 md:mt-0 text-right">
           <p className="text-2xl font-medium">Still have a query?</p>
-          <a  href="mailto:qrmedic@gmail.com" className="hover:underline text-2xl font-medium">qrmedic@gmail.com</a>
+          <a  href="mailto:info@qrmedic.org" className="hover:underline text-2xl font-medium">info@qrmedic.org</a>
         </div>
       </div>
     </footer>
