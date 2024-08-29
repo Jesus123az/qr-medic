@@ -18,7 +18,7 @@ const ForgotPassword = () => {
         title: "Email sent successfully",
         description: "Please check you emails to reset your password.",
       });
-      e.currentTarget.reset();
+      setEmail("");
     } catch (err) {
       toast({
         title: "Error",
@@ -36,6 +36,7 @@ const ForgotPassword = () => {
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col md:justify-center gap-y-5 md:gap-y-0  md:flex-row gap-x-3 mt-6">
           <Input
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="example@example.com"
             className=" max-w-96  "
